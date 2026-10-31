@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "astro dev",
     "predev": "node scripts/copy-cms.mjs",
-    "build": "astro build && node scripts/build-search.mjs",
+    "build": "astro build && node scripts/build-version.mjs && node scripts/build-search.mjs",
     "prebuild": "node scripts/copy-cms.mjs",
     "preview": "astro preview",
     "check": "astro check",

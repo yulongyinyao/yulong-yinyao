@@ -2,7 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SearchModal from '../components/SearchModal.astro';
-import { isConfigured, site, withBase } from '../consts';
+import { BASE_PATH, isConfigured, site, withBase } from '../consts';
 import '../styles/global.css';
 
 interface Props {
@@ -11,6 +11,7 @@ interface Props {
   image?: string;
   pagefindIgnore?: boolean;
   bodyClass?: string;
+  versionCheck?: boolean;
 }
 
 const {
@@ -19,16 +20,25 @@ const {
   image = site.ogImage,
   pagefindIgnore = true,
   bodyClass = '',
+  versionCheck = true,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.description}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').href;
 const ogImage = new URL(withBase(image), Astro.site ?? 'https://example.com').href;
 const configured = isConfigured();
+const buildVersion =
+  (import.meta.env.PUBLIC_BUILD_VERSION as string | undefined) ?? process.env.GITHUB_SHA ?? 'dev';
 ---
 
 <!doctype html>
-<html lang="zh-CN" class="scroll-smooth">
+<html
+  lang="zh-CN"
+  class="scroll-smooth"
+  data-base={BASE_PATH}
+  data-build-version={buildVersion}
+  data-version-check={versionCheck ? '1' : '0'}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -79,6 +89,46 @@ const configured = isConfigured();
         } catch {
           /* Ignore storage failures and keep the light theme. */
         }
+      })();
+    </script>
+
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const currentVersion = root.dataset.buildVersion || 'dev';
+        const base = root.dataset.base || '';
+        if (root.dataset.versionCheck !== '1' || currentVersion === 'dev') return;
+
+        let reloading = false;
+        const check = async () => {
+          if (reloading || document.visibilityState === 'hidden') return;
+          try {
+            const response = await fetch(`${base}/version.json?t=${Date.now()}`, {
+              cache: 'no-store',
+            });
+            if (!response.ok) return;
+            const data = await response.json();
+            const nextVersion = String(data.version || '');
+            if (!nextVersion || nextVersion === currentVersion) return;
+
+            const short = nextVersion.slice(0, 12);
+            const url = new URL(window.location.href);
+            // 避免 CDN 仍返回旧 HTML 时陷入无限刷新。
+            if (url.searchParams.get('v') === short) return;
+
+            reloading = true;
+            url.searchParams.set('v', short);
+            window.location.replace(url.toString());
+          } catch {
+            /* 离线或 version.json 尚未生成时静默忽略。 */
+          }
+        };
+
+        void check();
+        window.setInterval(check, 30000);
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') void check();
+        });
       })();
     </script>
 
