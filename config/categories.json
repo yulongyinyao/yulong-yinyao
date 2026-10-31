@@ -6,11 +6,6 @@
       "description": "一些不急着得出结论的文字。"
     },
     {
-      "slug": "tech",
-      "label": "技术",
-      "description": "折腾过的工具、代码与踩坑记录。"
-    },
-    {
       "slug": "life",
       "label": "生活",
       "description": "日常里值得收好的小片段。"
