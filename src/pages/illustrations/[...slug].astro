@@ -141,7 +141,7 @@ const related = data.illustrations
         <nav class="grid gap-3 sm:grid-cols-2" aria-label="上一幅与下一幅">
           {newer && (
             <a href={illustrationHref(newer.id)} class="card group p-4 transition hover:-translate-y-0.5">
-              <p class="text-[0.62rem] uppercase tracking-[0.18em] text-slate-400">更新的</p>
+              <p class="text-xs text-slate-400">更新的</p>
               <p class="mt-1 line-clamp-2 font-display text-sm font-semibold text-ink transition group-hover:text-violet-600 dark:text-white dark:group-hover:text-violet-300">
                 {newer.data.title}
               </p>
@@ -149,7 +149,7 @@ const related = data.illustrations
           )}
           {older && (
             <a href={illustrationHref(older.id)} class="card group p-4 text-right transition hover:-translate-y-0.5 sm:col-start-2">
-              <p class="text-[0.62rem] uppercase tracking-[0.18em] text-slate-400">更早的</p>
+              <p class="text-xs text-slate-400">更早的</p>
               <p class="mt-1 line-clamp-2 font-display text-sm font-semibold text-ink transition group-hover:text-violet-600 dark:text-white dark:group-hover:text-violet-300">
                 {older.data.title}
               </p>
@@ -166,7 +166,7 @@ const related = data.illustrations
             <h2 id="related-illustrations" class="font-display text-xl font-semibold text-ink dark:text-white">
               也许还想看
             </h2>
-            <span class="text-[0.65rem] text-slate-400">同分类或同标签</span>
+
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
             {related.map((entry) => <IllustrationCard illustration={entry} compact />)}

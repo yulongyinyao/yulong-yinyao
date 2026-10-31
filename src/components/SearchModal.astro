@@ -41,20 +41,16 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
           data-search-close
           aria-label="关闭搜索"
         >
-          Esc
+          关闭
         </button>
       </div>
 
       <div id="search-status" class="px-5 py-3 text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
-        输入关键词开始搜索。支持中文与英文。
+        搜索
       </div>
 
       <div id="search-results" class="max-h-[55vh] overflow-y-auto px-2 pb-2"></div>
 
-      <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200/70 px-5 py-2.5 text-[0.65rem] text-slate-400 dark:border-white/10 dark:text-slate-500">
-        <span>搜索索引由 Pagefind 在构建时生成</span>
-        <span class="hidden sm:inline">↑↓ 浏览 · Enter 打开 · Esc 关闭</span>
-      </div>
     </div>
   </div>
 </div>
@@ -109,7 +105,7 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
     window.setTimeout(() => input?.focus(), 30);
-    if (!input?.value) setStatus('输入关键词开始搜索。支持中文与英文。');
+    if (!input?.value) setStatus('搜索');
   }
 
   function closeModal(): void {
@@ -189,7 +185,7 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
   async function runSearch(term: string): Promise<void> {
     if (!term) {
       if (results) results.replaceChildren();
-      setStatus('输入关键词开始搜索。支持中文与英文。');
+      setStatus('搜索');
       return;
     }
 

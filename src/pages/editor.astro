@@ -15,17 +15,9 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     data-base={withBase('/')}
   >
     <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-rose-500/80 dark:text-rose-300/80">
-          Editor
-        </p>
-        <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl dark:text-white">
-          内容编辑器
-        </h1>
-        <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-500 dark:text-slate-400">
-          直接在这里写文章、整理插画、上传图片。保存后会提交到 GitHub，并自动触发站点重新发布。
-        </p>
-      </div>
+      <h1 class="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl dark:text-white">
+        内容编辑器
+      </h1>
       <div class="flex items-center gap-2">
         <a href={repoUrl} target="_blank" rel="noreferrer" class="btn-ghost">仓库</a>
         <button id="logout-button" type="button" class="btn-ghost hidden">退出</button>
@@ -34,17 +26,14 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
 
     <section id="auth-panel" class="mx-auto max-w-2xl">
       <div class="card p-6 sm:p-8">
-        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-violet-500/80 dark:text-violet-300/80">
-          Connect
-        </p>
-        <h2 class="mt-2 font-display text-2xl font-semibold text-ink dark:text-white">连接 GitHub</h2>
-        <p class="mt-2 text-sm leading-7 text-slate-500 dark:text-slate-400">
-          用一个只属于这台设备的 GitHub Token 登录。Token 只保存在当前浏览器，不会写进仓库。
-        </p>
+        <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">连接 GitHub</h2>
 
         <form id="auth-form" class="mt-6 space-y-4">
           <div>
-            <label class="field-label" for="token-input">Fine-grained personal access token</label>
+            <div class="flex items-center justify-between gap-2">
+              <label class="field-label" for="token-input">Token</label>
+              <a href={tokenUrl} target="_blank" rel="noreferrer" class="text-xs text-rose-600 underline underline-offset-4 dark:text-rose-300">生成</a>
+            </div>
             <input
               id="token-input"
               class="field font-mono"
@@ -58,7 +47,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
 
           <label class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <input id="remember-token" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-rose-500" checked />
-            在这台浏览器记住（关闭页面后仍保持登录）
+            在这台浏览器记住
           </label>
 
           <div class="flex flex-wrap items-center gap-3">
@@ -67,21 +56,6 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
           </div>
         </form>
 
-        <details class="mt-6 rounded-xl border border-slate-200/80 bg-white/45 p-4 text-sm text-slate-500 dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
-          <summary class="cursor-pointer font-medium text-slate-600 dark:text-slate-300">第一次使用？点开看 Token 怎么生成</summary>
-          <ol class="mt-3 list-decimal space-y-2 pl-5 leading-6">
-            <li>
-              打开
-              <a href={tokenUrl} target="_blank" rel="noreferrer" class="text-rose-600 underline underline-offset-4 dark:text-rose-300"
-                >GitHub → Fine-grained tokens → Generate new token</a
-              >。
-            </li>
-            <li>Repository access 选 “Only select repositories”，选中 <code class="rounded bg-slate-100 px-1 py-0.5 text-[0.75em] dark:bg-white/10">{repo}</code>。</li>
-            <li>Permissions → Repository permissions：<strong>Contents</strong> 设为 <strong>Read and write</strong>；Metadata 会自动变成 Read-only。</li>
-            <li>生成后复制 <code class="rounded bg-slate-100 px-1 py-0.5 text-[0.75em] dark:bg-white/10">github_pat_...</code>，粘贴到上面。</li>
-            <li>建议设置 90 天过期；过期后回到这里换一个新 Token 即可。</li>
-          </ol>
-        </details>
       </div>
     </section>
 
@@ -117,9 +91,6 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         <div class="min-w-0">
           <div id="form-empty" class="card flex min-h-[24rem] flex-col items-center justify-center p-10 text-center">
             <p class="font-display text-xl font-semibold text-ink dark:text-white">选择左侧内容，或新建一篇</p>
-            <p class="mt-2 max-w-md text-sm leading-7 text-slate-500 dark:text-slate-400">
-              文章、说说和项目用 Markdown 写，插画可以一次上传多张图片。保存后会自动提交到 GitHub。
-            </p>
             <div class="mt-5 flex flex-wrap justify-center gap-2">
               <button type="button" class="btn-primary" data-new="posts">新建文章</button>
               <button type="button" class="btn-ghost" data-new="illustrations">新建插画</button>
@@ -134,7 +105,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
             <div class="grid gap-4 sm:grid-cols-2">
               <label class="sm:col-span-2">
                 <span class="field-label">标题</span>
-                <input id="field-title" class="field" type="text" placeholder="给这篇内容起一个名字" />
+                <input id="field-title" class="field" type="text" placeholder="" />
               </label>
               <label>
                 <span class="field-label">日期</span>
@@ -176,11 +147,11 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
 
               <div id="project-fields" class="hidden space-y-5">
                 <label class="block">
-                  <span class="field-label">一句话简介</span>
+                  <span class="field-label">简介</span>
                   <textarea
                     id="field-summary"
                     class="field min-h-[5rem] resize-y leading-7"
-                    placeholder="这个项目是做什么的？一两句话就够。"
+                    placeholder=""
                   ></textarea>
                 </label>
                 <div class="grid gap-4 sm:grid-cols-2">
@@ -204,7 +175,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
                 <textarea
                   id="field-body"
                   class="field min-h-[22rem] resize-y font-mono text-[0.82rem] leading-7"
-                  placeholder="从这里开始写。支持 Markdown、标题、列表、引用和图片。"
+                  placeholder=""
                 ></textarea>
               </label>
             </div>
@@ -215,7 +186,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
                 <textarea
                   id="field-description"
                   class="field min-h-[6rem] resize-y leading-7"
-                  placeholder="写一点关于这组画的话。"
+                  placeholder=""
                 ></textarea>
               </label>
 
@@ -228,7 +199,6 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
                   </div>
                 </div>
                 <div id="illustration-images" class="grid grid-cols-2 gap-3 sm:grid-cols-3"></div>
-                <p class="mt-2 text-[0.7rem] text-slate-400">可以一次选多张；上传后会立即提交到仓库。建议长边不超过 2000px。</p>
               </div>
             </div>
 
@@ -252,13 +222,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       <section id="media-view" class="hidden">
         <div class="card p-5 sm:p-7">
           <div class="flex flex-wrap items-end justify-between gap-3">
-            <div>
-              <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">媒体库</h2>
-              <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                仓库里 <code class="rounded bg-slate-100 px-1 py-0.5 text-[0.75em] dark:bg-white/10">public/uploads/</code> 下的图片。
-                可以设为文章封面、加入插画，或直接删除。
-              </p>
-            </div>
+            <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">媒体库</h2>
             <div class="flex flex-wrap items-center gap-2">
               <select id="media-folder" class="field w-auto py-2 text-xs">
                 <option value="posts">文章配图</option>
@@ -278,9 +242,6 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         <div class="grid items-start gap-5 lg:grid-cols-2">
           <div class="card p-5 sm:p-7">
             <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">个人卡片</h2>
-            <p class="mt-1 text-sm leading-7 text-slate-500 dark:text-slate-400">
-              修改首页左侧卡片的头像和简介。头像会同时用于站点图标和分享封面。
-            </p>
 
             <div class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start">
               <div class="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-slate-200/90 bg-slate-50/60 dark:border-white/10 dark:bg-white/5">
@@ -309,9 +270,6 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
             <div class="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">分类</h2>
-                <p class="mt-1 text-sm leading-7 text-slate-500 dark:text-slate-400">
-                  名称显示在站点上，slug 用于 URL；已有内容的分类不能直接删除或改 slug。
-                </p>
               </div>
             </div>
             <div id="settings-categories" class="mt-5 space-y-6"></div>
@@ -753,7 +711,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     const container = $('item-list');
     if (!list.length) {
       container.innerHTML =
-        '<p class="px-3 py-8 text-center text-sm text-slate-400">还没有内容，点右上角新建。</p>';
+        '<p class="px-3 py-8 text-center text-sm text-slate-400">还没有内容</p>';
       return;
     }
 
@@ -779,7 +737,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     const grid = $('media-grid');
     if (!media.length) {
       grid.innerHTML =
-        '<p class="col-span-full py-12 text-center text-sm text-slate-400">媒体库还是空的，上传第一张图片吧。</p>';
+        '<p class="col-span-full py-12 text-center text-sm text-slate-400">媒体库还是空的</p>';
       return;
     }
 
@@ -834,7 +792,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
                 <label class="block"><span class="field-label">slug</span><input class="field py-2 font-mono text-xs" data-cat-field="slug" value="${esc(item.slug)}" placeholder="essay" /></label>
                 <button type="button" class="btn-ghost self-end px-3 py-2 text-xs text-red-500" data-remove-category>移除</button>
               </div>
-              <label class="mt-2 block"><span class="field-label">描述（可选，显示在关于页）</span><input class="field py-2 text-xs" data-cat-field="description" value="${esc(item.description)}" placeholder="一句话说明这个分类" /></label>
+              <label class="mt-2 block"><span class="field-label">描述</span><input class="field py-2 text-xs" data-cat-field="description" value="${esc(item.description)}" placeholder="" /></label>
             </div>`,
           )
           .join('')}
@@ -1012,7 +970,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     const container = $('illustration-images');
     if (!images.length) {
       container.innerHTML =
-        '<p class="col-span-full rounded-xl border border-dashed border-slate-200/80 px-3 py-8 text-center text-xs text-slate-400 dark:border-white/10">还没有图片，点“上传图片”选择相册或拍照。</p>';
+        '<p class="col-span-full rounded-xl border border-dashed border-slate-200/80 px-3 py-8 text-center text-xs text-slate-400 dark:border-white/10">还没有图片</p>';
       return;
     }
 

@@ -56,14 +56,8 @@ const groupedYears = Array.from(years.entries());
 <BaseLayout title="归档" description="按年份整理的全部文章与插画。">
   <div class="border-b border-white/40 bg-gradient-to-b from-slate-50/80 to-transparent dark:border-white/10 dark:from-white/5">
     <div class="mx-auto max-w-[88rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
-      <p class="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-400">Timeline</p>
-      <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 class="font-display text-3xl font-semibold tracking-tight text-ink dark:text-white sm:text-4xl">归档</h1>
-          <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
-            所有文章和插画按年份排在一起。时间是最诚实的分类。
-          </p>
-        </div>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <h1 class="font-display text-3xl font-semibold tracking-tight text-ink dark:text-white sm:text-4xl">归档</h1>
         <p class="rounded-full border border-white/70 bg-white/60 px-3 py-1.5 text-xs text-slate-500 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
           共 <span class="font-semibold text-ink dark:text-white">{entries.length}</span> 条
         </p>
@@ -80,14 +74,14 @@ const groupedYears = Array.from(years.entries());
   >
     <section class="card p-4 sm:p-5" aria-label="归档筛选">
       <div class="flex flex-wrap items-center gap-2">
-        <span class="mr-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">类型</span>
+        <span class="mr-1 text-xs font-medium text-slate-500 dark:text-slate-400">类型</span>
         <button type="button" class="chip-muted" data-archive-type="all" aria-pressed="true">全部</button>
         <button type="button" class="chip-muted" data-archive-type="post" aria-pressed="false">文章</button>
         <button type="button" class="chip-muted" data-archive-type="illustration" aria-pressed="false">插画</button>
       </div>
 
       <div class="mt-3 flex flex-wrap items-center gap-2">
-        <label for="archive-tag" class="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">
+        <label for="archive-tag" class="text-xs font-medium text-slate-500 dark:text-slate-400">
           标签
         </label>
         <select

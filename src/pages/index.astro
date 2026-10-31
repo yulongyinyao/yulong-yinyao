@@ -83,9 +83,6 @@ const groups = [
         ) : (
           <div class="card p-8 text-center">
             <p class="font-display text-lg text-ink dark:text-white">还没有文章</p>
-            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              打开 <a href={withBase('/editor/')} class="text-rose-500 underline underline-offset-4">/editor</a> 写下第一篇。
-            </p>
           </div>
         )
       }
@@ -116,9 +113,6 @@ const groups = [
         ) : (
           <div class="card p-8 text-center">
             <p class="font-display text-lg text-ink dark:text-white">还没有插画</p>
-            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              打开 <a href={withBase('/editor/')} class="text-rose-500 underline underline-offset-4">/editor</a> 上传第一张。
-            </p>
           </div>
         )
       }
@@ -194,7 +188,7 @@ const groups = [
 
     <section class="card overflow-hidden" aria-labelledby="gallery-entry">
       <a href={withBase('/gallery/')} class="group grid gap-0 sm:grid-cols-[1fr_1.1fr]">
-        <div class="grid grid-cols-2 gap-1.5 bg-gradient-to-br from-rose-100 via-[#ede0d0] to-violet-100 p-2 dark:from-rose-400/10 dark:via-[#ecd9ed]/5 dark:to-violet-400/10">
+        <div class="grid grid-cols-2 gap-1.5 bg-gradient-to-br from-rose-100 via-[#f8f4ed] to-violet-100 p-2 dark:from-rose-400/10 dark:via-[#fffef9]/5 dark:to-violet-400/10">
           {galleryImages.length > 0 ? (
             galleryImages.map((src, index) => (
               <img
@@ -213,19 +207,9 @@ const groups = [
           )}
         </div>
         <div class="flex flex-col justify-center p-6">
-          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-rose-400">Gallery</p>
-          <h2 id="gallery-entry" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+          <h2 id="gallery-entry" class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
             照片墙
           </h2>
-          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
-            把插画铺成一面墙，点开可以放大看。
-          </p>
-          <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-rose-500 transition group-hover:gap-2.5 dark:text-rose-300">
-            去看看
-            <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M5 12h14m-5-5 5 5-5 5" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </span>
         </div>
       </a>
     </section>

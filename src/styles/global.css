@@ -14,7 +14,7 @@
   /* Plum, mauve, lilac and warm cream. The rose/violet tokens are remapped so
      existing components pick up the new skin without a class-by-class rewrite. */
   --color-white: #fbf7f6;
-  --color-cream: #ede0d0;
+  --color-cream: #f8f4ed;
   --color-ink: #3b2f43;
   --color-sakura: #746097;
   --color-lavender: #ad86ae;
@@ -58,7 +58,7 @@
 
 :root {
   color-scheme: light;
-  --page-bg: #ede0d0;
+  --page-bg: #f8f4ed;
   --page-fg: #3b2f43;
 }
 
@@ -83,7 +83,7 @@ body {
 }
 
 ::selection {
-  background: #ecd9ed;
+  background: #fffef9;
   color: #3b2f43;
 }
 
@@ -97,7 +97,7 @@ body::before {
   opacity: 0.42;
   background-image:
     radial-gradient(rgba(116, 96, 151, 0.13) 0.6px, transparent 0.6px),
-    linear-gradient(180deg, rgba(236, 217, 237, 0.26), transparent 42%);
+    linear-gradient(180deg, rgba(255, 254, 249, 0.26), transparent 42%);
   background-size:
     16px 16px,
     100% 100%;
@@ -107,8 +107,8 @@ body::before {
 html.dark body::before {
   opacity: 0.2;
   background-image:
-    radial-gradient(rgba(236, 217, 237, 0.12) 0.6px, transparent 0.6px),
-    linear-gradient(180deg, rgba(236, 217, 237, 0.04), transparent 45%);
+    radial-gradient(rgba(255, 254, 249, 0.12) 0.6px, transparent 0.6px),
+    linear-gradient(180deg, rgba(255, 254, 249, 0.04), transparent 45%);
 }
 
 #search-results mark {
@@ -119,14 +119,14 @@ html.dark body::before {
 }
 
 .dark #search-results mark {
-  background: rgba(236, 217, 237, 0.24);
+  background: rgba(255, 254, 249, 0.24);
   color: #f3e6f2;
 }
 
 /* Fixed transparent header over the home hero; solid paper once scrolled. */
 .site-header {
-  background-color: rgba(237, 224, 208, 0.84);
-  border-color: rgba(236, 217, 237, 0.65);
+  background-color: rgba(248, 244, 237, 0.84);
+  border-color: rgba(255, 254, 249, 0.65);
   transition:
     background-color 250ms ease,
     border-color 250ms ease,
@@ -148,15 +148,15 @@ html.dark body::before {
 }
 
 .site-header[data-transparent='true'].is-scrolled {
-  background-color: rgba(237, 224, 208, 0.94);
+  background-color: rgba(248, 244, 237, 0.94);
   background-image: none;
-  border-color: rgba(236, 217, 237, 0.65);
+  border-color: rgba(255, 254, 249, 0.65);
   box-shadow: 0 14px 40px -30px rgba(59, 47, 67, 0.42);
 }
 
 .dark .site-header {
   background-color: rgba(30, 23, 40, 0.88);
-  border-color: rgba(236, 217, 237, 0.1);
+  border-color: rgba(255, 254, 249, 0.1);
 }
 
 .dark .site-header[data-transparent='true'] {
@@ -166,7 +166,7 @@ html.dark body::before {
 
 .dark .site-header[data-transparent='true'].is-scrolled {
   background-color: rgba(30, 23, 40, 0.94);
-  border-color: rgba(236, 217, 237, 0.1);
+  border-color: rgba(255, 254, 249, 0.1);
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .site-title,
@@ -177,19 +177,19 @@ html.dark body::before {
 
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link:hover,
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link-active {
-  background-color: rgba(236, 217, 237, 0.16);
+  background-color: rgba(255, 254, 249, 0.16);
   box-shadow: none;
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .icon-button {
-  border-color: rgba(236, 217, 237, 0.28);
-  background-color: rgba(236, 217, 237, 0.12);
+  border-color: rgba(255, 254, 249, 0.28);
+  background-color: rgba(255, 254, 249, 0.12);
   color: #fbf7f6;
   box-shadow: none;
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .icon-button:hover {
-  background-color: rgba(236, 217, 237, 0.22);
+  background-color: rgba(255, 254, 249, 0.22);
   color: #fff;
 }
 
