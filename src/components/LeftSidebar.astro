@@ -29,7 +29,8 @@ const githubUrl =
         src={withBase(site.avatar)}
         alt={`${site.displayName} 的头像`}
         class="h-full w-full rounded-xl object-cover"
-        loading="lazy"
+        loading="eager"
+        fetchpriority="high"
         decoding="async"
       />
       <span class="absolute -bottom-1 -right-1 grid h-6 w-6 place-items-center rounded-full border-2 border-white bg-emerald-400 dark:border-[#211812]">

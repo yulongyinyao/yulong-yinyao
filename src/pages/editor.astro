@@ -1228,6 +1228,9 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       ].sort((a, b) => dateString(b.data.date).localeCompare(dateString(a.data.date)));
       current = saved;
       fillForm(saved);
+      setStatus(
+        `${items.posts.length} 篇文章 · ${items.illustrations.length} 幅插画 · ${items.notes.length} 条说说 · ${items.projects.length} 个项目 · ${media.length} 张图片`,
+      );
       toast('已提交，GitHub Actions 约 40–60 秒后发布；页面会自动刷新。');
     } catch (error) {
       toast(error instanceof Error ? error.message : String(error), 'error');
