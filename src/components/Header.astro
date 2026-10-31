@@ -1,17 +1,30 @@
 ---
 import { site, withBase } from '../consts';
+import { friends } from '../data/friends';
+import { getPublishedIllustrations, getPublishedNotes, getPublishedProjects } from '../lib/content';
 
 const current = Astro.url.pathname.replace(/\/+$/, '') || '/';
 const homePath = withBase('/').replace(/\/+$/, '') || '/';
 const isHome = current === homePath;
 
+const [notes, projects, illustrations] = await Promise.all([
+  getPublishedNotes(),
+  getPublishedProjects(),
+  getPublishedIllustrations(),
+]);
+
+const showNotes = notes.length > 0;
+const showProjects = projects.length > 0;
+const showGallery = illustrations.some((entry) => (entry.data.images?.length ?? 0) > 0);
+const showFriends = friends.length > 0;
+
 const navItems = [
   { label: '首页', href: withBase('/') },
   { label: '文章', href: withBase('/posts/') },
   { label: '插画', href: withBase('/illustrations/') },
-  { label: '说说', href: withBase('/notes/') },
-  { label: '项目', href: withBase('/projects/') },
-  { label: '照片墙', href: withBase('/gallery/') },
+  ...(showNotes ? [{ label: '说说', href: withBase('/notes/') }] : []),
+  ...(showProjects ? [{ label: '项目', href: withBase('/projects/') }] : []),
+  ...(showGallery ? [{ label: '照片墙', href: withBase('/gallery/') }] : []),
   { label: '归档', href: withBase('/archive/') },
   { label: '关于', href: withBase('/about/') },
 ];

@@ -16,6 +16,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "cms:copy": "node scripts/copy-cms.mjs",
+    "fonts:subset": "node scripts/subset-fonts.mjs",
     "setup": "node scripts/setup.mjs",
     "format": "prettier --write ."
   },
@@ -31,9 +32,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
+    "adm-zip": "^0.6.1",
     "pagefind": "1.5.2",
     "prettier": "3.9.10",
     "prettier-plugin-astro": "1.1.2",
+    "subset-font": "^2.9.0",
     "typescript": "^6.0.3"
   }
 }

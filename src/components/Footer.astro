@@ -1,8 +1,19 @@
 ---
 import { isConfigured, site, withBase } from '../consts';
+import { friends } from '../data/friends';
+import { getPublishedIllustrations, getPublishedNotes, getPublishedProjects } from '../lib/content';
 
 const year = new Date().getFullYear();
 const configured = isConfigured();
+const [notes, projects, illustrations] = await Promise.all([
+  getPublishedNotes(),
+  getPublishedProjects(),
+  getPublishedIllustrations(),
+]);
+const showNotes = notes.length > 0;
+const showProjects = projects.length > 0;
+const showGallery = illustrations.some((entry) => (entry.data.images?.length ?? 0) > 0);
+const showFriends = friends.length > 0;
 ---
 
 <footer class="mt-16 border-t border-slate-200/60 bg-white/30 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.02]">
@@ -18,9 +29,9 @@ const configured = isConfigured();
           <ul class="space-y-1.5 text-slate-500 dark:text-slate-400">
             <li><a href={withBase('/posts/')} class="transition hover:text-rose-500">文章</a></li>
             <li><a href={withBase('/illustrations/')} class="transition hover:text-rose-500">插画</a></li>
-            <li><a href={withBase('/notes/')} class="transition hover:text-rose-500">说说</a></li>
-            <li><a href={withBase('/projects/')} class="transition hover:text-rose-500">项目</a></li>
-            <li><a href={withBase('/gallery/')} class="transition hover:text-rose-500">照片墙</a></li>
+            {showNotes && <li><a href={withBase('/notes/')} class="transition hover:text-rose-500">说说</a></li>}
+            {showProjects && <li><a href={withBase('/projects/')} class="transition hover:text-rose-500">项目</a></li>}
+            {showGallery && <li><a href={withBase('/gallery/')} class="transition hover:text-rose-500">照片墙</a></li>}
             <li><a href={withBase('/archive/')} class="transition hover:text-rose-500">归档</a></li>
           </ul>
         </div>
@@ -28,7 +39,7 @@ const configured = isConfigured();
           <p class="mb-2 font-semibold text-slate-600 dark:text-slate-300">站点</p>
           <ul class="space-y-1.5 text-slate-500 dark:text-slate-400">
             <li><a href={withBase('/about/')} class="transition hover:text-rose-500">关于</a></li>
-            <li><a href={withBase('/friends/')} class="transition hover:text-rose-500">友链</a></li>
+            {showFriends && <li><a href={withBase('/friends/')} class="transition hover:text-rose-500">友链</a></li>}
             <li><a href={withBase('/editor/')} class="transition hover:text-rose-500">编辑器</a></li>
             <li><a href={withBase('/robots.txt')} class="transition hover:text-rose-500">robots.txt</a></li>
           </ul>

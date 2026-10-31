@@ -78,6 +78,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 | `pnpm check` | Astro/TypeScript 检查（大项目可能吃内存） |
 | `pnpm setup` | 写入 GitHub 用户名/仓库名/域名 |
 | `pnpm cms:copy` | 把 Sveltia CMS 复制到 `public/admin/` |
+| `pnpm fonts:subset` | 按当前站内文字重新生成字体子集（见 `docs/FONTS.md`） |
 | `pnpm format` | Prettier 格式化 |
 
 `pnpm dev` 和 `pnpm build` 会自动执行 `cms:copy`，一般不需要手动跑。
