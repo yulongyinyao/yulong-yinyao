@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import SearchBar from '../components/SearchBar.astro';
 import ThreeColumnLayout from '../components/ThreeColumnLayout.astro';
 import CategoryNav from '../components/CategoryNav.astro';
 import PostCard from '../components/PostCard.astro';
@@ -32,13 +33,13 @@ const groups = [
 
 <BaseLayout description="银曜的个人博客：文章与插画。">
   <Hero />
+  <SearchBar />
 
   <ThreeColumnLayout
     postCount={data.postCount}
     illustrationCount={data.illustrationCount}
     categoryCount={data.categoryCount}
     tagCount={data.tagCount}
-    tags={data.tags}
     recent={data.recent}
   >
     <CategoryNav groups={groups} />
@@ -67,7 +68,7 @@ const groups = [
           <div class="card p-8 text-center">
             <p class="font-display text-lg text-ink dark:text-white">还没有文章</p>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              打开 <a href={withBase('/admin/')} class="text-rose-500 underline underline-offset-4">/admin</a> 写下第一篇。
+              打开 <a href={withBase('/editor/')} class="text-rose-500 underline underline-offset-4">/editor</a> 写下第一篇。
             </p>
           </div>
         )
@@ -100,7 +101,7 @@ const groups = [
           <div class="card p-8 text-center">
             <p class="font-display text-lg text-ink dark:text-white">还没有插画</p>
             <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
-              打开 <a href={withBase('/admin/')} class="text-rose-500 underline underline-offset-4">/admin</a> 上传第一张。
+              打开 <a href={withBase('/editor/')} class="text-rose-500 underline underline-offset-4">/editor</a> 上传第一张。
             </p>
           </div>
         )

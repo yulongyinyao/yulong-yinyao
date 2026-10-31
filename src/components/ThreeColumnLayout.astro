@@ -2,12 +2,6 @@
 import LeftSidebar from './LeftSidebar.astro';
 import RightSidebar from './RightSidebar.astro';
 
-interface TagItem {
-  name: string;
-  count: number;
-  href: string;
-}
-
 interface RecentItem {
   title: string;
   href: string;
@@ -20,7 +14,6 @@ interface Props {
   illustrationCount: number;
   categoryCount: number;
   tagCount: number;
-  tags: TagItem[];
   recent: RecentItem[];
 }
 
@@ -29,7 +22,6 @@ const {
   illustrationCount,
   categoryCount,
   tagCount,
-  tags,
   recent,
 } = Astro.props;
 ---
@@ -52,7 +44,6 @@ const {
         illustrationCount={illustrationCount}
         categoryCount={categoryCount}
         tagCount={tagCount}
-        tags={tags}
         recent={recent}
       />
     </div>
@@ -64,7 +55,6 @@ const {
       illustrationCount={illustrationCount}
       categoryCount={categoryCount}
       tagCount={tagCount}
-      tags={tags}
       recent={recent}
       compact
     />

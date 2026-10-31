@@ -46,7 +46,6 @@ const groups = [
     illustrationCount={data.illustrationCount}
     categoryCount={data.categoryCount}
     tagCount={data.tagCount}
-    tags={data.tags}
     recent={data.recent}
   >
     <CategoryNav groups={groups} />
@@ -54,7 +53,7 @@ const groups = [
 
     {
       data.posts.length > 0 ? (
-        <div class="grid gap-4 xl:grid-cols-2">
+        <div class="grid gap-4">
           {data.posts.map((post) => <PostCard post={post} />)}
         </div>
       ) : null

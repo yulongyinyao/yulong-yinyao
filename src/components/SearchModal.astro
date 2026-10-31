@@ -16,7 +16,7 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
   <div class="absolute inset-0 bg-[#120e1f]/60 backdrop-blur-sm" data-search-backdrop></div>
 
   <div class="relative mx-auto mt-[8vh] w-[min(92vw,44rem)] sm:mt-[12vh]">
-    <div class="card overflow-hidden shadow-2xl">
+    <div class="card overflow-hidden bg-[#fffaf4]/95 shadow-2xl dark:bg-[#211812]/95">
       <div class="flex items-center gap-3 border-b border-slate-200/70 px-4 py-3 dark:border-white/10 sm:px-5">
         <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
           <circle cx="11" cy="11" r="6.5"></circle>
@@ -136,7 +136,7 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
 
   function safeExcerpt(html: string): string {
     const documentFragment = new DOMParser().parseFromString(html, 'text/html');
-    documentFragment.querySelectorAll('*').forEach((element) => {
+    documentFragment.body.querySelectorAll('*').forEach((element) => {
       if (element.tagName !== 'MARK') {
         element.replaceWith(...Array.from(element.childNodes));
       }
@@ -207,7 +207,8 @@ const pagefindUrl = withBase('/pagefind/pagefind.js');
       if (current !== requestId) return;
 
       renderResults(data, term);
-    } catch {
+    } catch (error) {
+      console.error('Pagefind search failed', error);
       if (current !== requestId) return;
       if (results) results.replaceChildren();
       setStatus('搜索索引尚未生成。开发模式请先运行 pnpm build && pnpm preview 再试。');

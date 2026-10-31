@@ -1,0 +1,44 @@
+---
+const now = new Date();
+const year = now.getFullYear();
+const month = now.getMonth();
+const today = now.getDate();
+const monthLabel = `${year} 年 ${month + 1} 月`;
+const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+const firstWeekday = new Date(year, month, 1).getDay();
+const daysInMonth = new Date(year, month + 1, 0).getDate();
+const cells: Array<number | null> = [
+  ...Array.from({ length: firstWeekday }, () => null),
+  ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+];
+while (cells.length % 7 !== 0) cells.push(null);
+---
+
+<section class="card p-5" aria-label="日历">
+  <div class="flex items-baseline justify-between">
+    <h2 class="font-display text-base font-semibold text-ink dark:text-white">日历</h2>
+    <span class="text-[0.65rem] tracking-wide text-slate-400 dark:text-slate-500">今天 · {month + 1}/{today}</span>
+  </div>
+  <p class="mt-1 font-display text-lg text-rose-600 dark:text-rose-300">{monthLabel}</p>
+
+  <div class="mt-3 grid grid-cols-7 gap-1 text-center">
+    {weekdays.map((day) => (
+      <span class="py-1 text-[0.6rem] font-medium text-slate-400 dark:text-slate-500">{day}</span>
+    ))}
+    {
+      cells.map((day) => (
+        <span
+          class:list={[
+            'grid h-7 place-items-center rounded-lg text-[0.72rem]',
+            day === null && 'invisible',
+            day === today
+              ? 'bg-rose-500 font-semibold text-white shadow-sm'
+              : 'text-slate-600 hover:bg-rose-50 dark:text-slate-300 dark:hover:bg-white/5',
+          ]}
+        >
+          {day ?? ''}
+        </span>
+      ))
+    }
+  </div>
+</section>
