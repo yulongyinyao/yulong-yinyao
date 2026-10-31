@@ -273,6 +273,12 @@ html.dark body::before {
     @apply prose-img:rounded-2xl prose-img:shadow-lg prose-hr:border-slate-200;
     @apply dark:prose-invert dark:prose-a:text-rose-300 dark:prose-blockquote:border-l-rose-400/40 dark:prose-blockquote:bg-white/5 dark:prose-hr:border-white/10;
   }
+
+  /* Keep the line breaks and indentation the author typed in Markdown. */
+  .prose-custom p,
+  .prose-custom li {
+    white-space: pre-wrap;
+  }
 }
 
 /* View transitions: gentle cross-fade, disabled when the user asks for less motion. */

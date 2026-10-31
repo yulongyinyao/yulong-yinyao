@@ -1373,6 +1373,35 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     }
   }
 
+  function preserveMarkdownIndent(markdown: string): string {
+    let inFence = false;
+    let previousBlank = true;
+    return markdown
+      .split('\n')
+      .map((line) => {
+        if (/^\s*(```|~~~)/.test(line)) {
+          inFence = !inFence;
+          previousBlank = false;
+          return line;
+        }
+        if (inFence) {
+          previousBlank = line.trim() === '';
+          return line;
+        }
+        const match = line.match(/^[ \t]+/);
+        if (match) {
+          const width = match[0].replace(/\t/g, '    ').length;
+          const rest = line.slice(match[0].length);
+          const isMarkdownSyntax = /^([-*+]|\d+\.)\s/.test(rest) || rest.startsWith('>');
+          const isIndentedCode = width >= 4 && previousBlank;
+          if (!isMarkdownSyntax && !isIndentedCode) line = '\u00a0'.repeat(width) + rest;
+        }
+        previousBlank = line.trim() === '';
+        return line;
+      })
+      .join('\n');
+  }
+
   function sanitizeHtml(html: string): string {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     doc.querySelectorAll('script,iframe,object,embed,link,meta,style,form').forEach((node) => node.remove());
@@ -1401,8 +1430,8 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     const content = $('preview-content');
     if (current.type === 'posts' || current.type === 'notes' || current.type === 'projects') {
       const markdown = $<HTMLTextAreaElement>('field-body').value;
-      content.innerHTML = `<article class="prose prose-sm prose-slate max-w-none dark:prose-invert">${sanitizeHtml(
-        String(marked.parse(markdown)),
+      content.innerHTML = `<article class="prose prose-sm prose-custom max-w-none dark:prose-invert">${sanitizeHtml(
+        String(marked.parse(preserveMarkdownIndent(markdown))),
       )}</article>`;
     } else {
       const description = $<HTMLTextAreaElement>('field-description').value.trim();

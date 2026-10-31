@@ -87,6 +87,18 @@ const masonry = layout === 'masonry';
     </div>
 
     <div class="relative flex min-h-0 flex-1 items-center justify-center">
+      <div
+        class="pointer-events-none absolute inset-0 z-20 place-items-center bg-[#08060e]/20"
+        style="display: none"
+        data-lightbox-loading
+        aria-live="polite"
+      >
+        <div class="flex flex-col items-center gap-3 text-white/70">
+          <span class="h-9 w-9 animate-spin rounded-full border-2 border-white/15 border-t-white/80"></span>
+          <span class="text-xs tracking-wide">正在加载图片…</span>
+        </div>
+      </div>
+
       <button
         type="button"
         class="absolute left-0 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 sm:left-2"
@@ -103,7 +115,7 @@ const masonry = layout === 'masonry';
           data-lightbox-image
           src=""
           alt=""
-          class="max-h-[78vh] max-w-full rounded-xl object-contain shadow-2xl"
+          class="max-h-[78vh] max-w-full rounded-xl object-contain opacity-0 shadow-2xl transition-opacity duration-300"
         />
         <figcaption class="max-w-2xl text-center text-xs leading-5 text-white/60" data-lightbox-caption></figcaption>
       </figure>
@@ -133,16 +145,32 @@ const masonry = layout === 'masonry';
   const counter = lightbox?.querySelector<HTMLElement>('[data-lightbox-counter]');
   const previous = lightbox?.querySelector<HTMLButtonElement>('[data-lightbox-prev]');
   const next = lightbox?.querySelector<HTMLButtonElement>('[data-lightbox-next]');
+  const loading = lightbox?.querySelector<HTMLElement>('[data-lightbox-loading]');
+  const loadingText = loading?.querySelector<HTMLElement>('span:last-child');
   let current = 0;
   let lastFocused: HTMLElement | null = null;
+
+  image?.addEventListener('load', () => {
+    image.classList.remove('opacity-0');
+    if (loading) loading.style.display = 'none';
+  });
+  image?.addEventListener('error', () => {
+    if (loadingText) loadingText.textContent = '图片加载失败，请稍后再试';
+    if (loading) loading.style.display = 'grid';
+  });
 
   function show(index: number): void {
     if (triggers.length === 0) return;
     current = (index + triggers.length) % triggers.length;
     const trigger = triggers[current];
     if (image) {
+      image.classList.add('opacity-0');
       image.src = trigger.dataset.src ?? '';
       image.alt = trigger.dataset.alt ?? '';
+    }
+    if (loading) {
+      if (loadingText) loadingText.textContent = '正在加载图片…';
+      loading.style.display = 'grid';
     }
     if (caption) caption.textContent = trigger.dataset.alt ?? '';
     if (counter) {
