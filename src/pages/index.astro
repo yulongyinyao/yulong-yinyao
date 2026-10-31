@@ -186,32 +186,32 @@ const groups = [
       )
     }
 
-    <section class="card overflow-hidden" aria-labelledby="gallery-entry">
-      <a href={withBase('/gallery/')} class="group grid gap-0 sm:grid-cols-[1fr_1.1fr]">
-        <div class="grid grid-cols-2 gap-1.5 bg-gradient-to-br from-rose-100 via-[#f8f4ed] to-violet-100 p-2 dark:from-rose-400/10 dark:via-[#fffef9]/5 dark:to-violet-400/10">
-          {galleryImages.length > 0 ? (
-            galleryImages.map((src, index) => (
-              <img
-                src={src}
-                alt=""
-                class:list={[
-                  'h-24 w-full rounded-lg object-cover transition duration-500 group-hover:scale-[1.02] sm:h-28',
-                  index === 0 && 'col-span-2 h-32 sm:h-36',
-                ]}
-                loading="lazy"
-                decoding="async"
-              />
-            ))
-          ) : (
-            <div class="col-span-2 grid h-48 place-items-center font-display text-3xl text-rose-300/70 dark:text-rose-200/30">画</div>
-          )}
-        </div>
-        <div class="flex flex-col justify-center p-6">
-          <h2 id="gallery-entry" class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
-            照片墙
-          </h2>
-        </div>
-      </a>
-    </section>
+    {
+      galleryImages.length > 0 && (
+        <section class="card overflow-hidden" aria-labelledby="gallery-entry">
+          <a href={withBase('/gallery/')} class="group grid gap-0 sm:grid-cols-[1fr_1.1fr]">
+            <div class="grid grid-cols-2 gap-1.5 bg-gradient-to-br from-rose-100 via-[#f8f4ed] to-violet-100 p-2 dark:from-rose-400/10 dark:via-[#fffef9]/5 dark:to-violet-400/10">
+              {galleryImages.map((src, index) => (
+                <img
+                  src={src}
+                  alt=""
+                  class:list={[
+                    'h-24 w-full rounded-lg object-cover transition duration-500 group-hover:scale-[1.02] sm:h-28',
+                    index === 0 && 'col-span-2 h-32 sm:h-36',
+                  ]}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
+            </div>
+            <div class="flex flex-col justify-center p-6">
+              <h2 id="gallery-entry" class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+                照片墙
+              </h2>
+            </div>
+          </a>
+        </section>
+      )
+    }
   </ThreeColumnLayout>
 </BaseLayout>
