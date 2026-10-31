@@ -41,7 +41,7 @@ const cover = project.data.cover ? withBase(project.data.cover) : '';
       <a href={href} class="transition hover:text-rose-600 dark:hover:text-rose-300">{project.data.title}</a>
     </h2>
     {project.data.summary && (
-      <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{project.data.summary}</p>
+      <p class="mt-2 line-clamp-2 font-body text-sm leading-6 text-slate-600 dark:text-slate-300">{project.data.summary}</p>
     )}
     <div class="mt-4 flex flex-wrap items-center gap-1.5">
       {project.data.tags.slice(0, 3).map((tag) => <span class="chip-muted">#{tag}</span>)}
