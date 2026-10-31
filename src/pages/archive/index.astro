@@ -1,0 +1,270 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ThreeColumnLayout from '../../components/ThreeColumnLayout.astro';
+import {
+  formatDate,
+  illustrationHref,
+  postHref,
+  withBase,
+} from '../../consts';
+import { categoryLabel } from '../../data/categories';
+import { getSiteData } from '../../lib/content';
+
+const data = await getSiteData();
+
+type ArchiveEntry = {
+  id: string;
+  title: string;
+  date: string;
+  type: 'post' | 'illustration';
+  category: string;
+  tags: string[];
+  href: string;
+};
+
+const entries: ArchiveEntry[] = [
+  ...data.posts.map((post) => ({
+    id: post.id,
+    title: post.data.title,
+    date: post.data.date,
+    type: 'post' as const,
+    category: categoryLabel('post', post.data.category),
+    tags: post.data.tags,
+    href: postHref(post.id),
+  })),
+  ...data.illustrations.map((illustration) => ({
+    id: illustration.id,
+    title: illustration.data.title,
+    date: illustration.data.date,
+    type: 'illustration' as const,
+    category: categoryLabel('illustration', illustration.data.category),
+    tags: illustration.data.tags,
+    href: illustrationHref(illustration.id),
+  })),
+].sort((a, b) => b.date.localeCompare(a.date));
+
+const years = new Map<string, ArchiveEntry[]>();
+for (const entry of entries) {
+  const year = entry.date.slice(0, 4);
+  const list = years.get(year) ?? [];
+  list.push(entry);
+  years.set(year, list);
+}
+const groupedYears = Array.from(years.entries());
+---
+
+<BaseLayout title="归档" description="按年份整理的全部文章与插画。">
+  <div class="border-b border-white/40 bg-gradient-to-b from-slate-50/80 to-transparent dark:border-white/10 dark:from-white/5">
+    <div class="mx-auto max-w-[88rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+      <p class="text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-400">Timeline</p>
+      <div class="mt-2 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 class="font-display text-3xl font-semibold tracking-tight text-ink dark:text-white sm:text-4xl">归档</h1>
+          <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-600 dark:text-slate-300">
+            所有文章和插画按年份排在一起。时间是最诚实的分类。
+          </p>
+        </div>
+        <p class="rounded-full border border-white/70 bg-white/60 px-3 py-1.5 text-xs text-slate-500 backdrop-blur dark:border-white/10 dark:bg-white/5 dark:text-slate-400">
+          共 <span class="font-semibold text-ink dark:text-white">{entries.length}</span> 条
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ThreeColumnLayout
+    postCount={data.postCount}
+    illustrationCount={data.illustrationCount}
+    categoryCount={data.categoryCount}
+    tagCount={data.tagCount}
+    tags={data.tags}
+    recent={data.recent}
+  >
+    <section class="card p-4 sm:p-5" aria-label="归档筛选">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="mr-1 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">类型</span>
+        <button type="button" class="chip-muted" data-archive-type="all" aria-pressed="true">全部</button>
+        <button type="button" class="chip-muted" data-archive-type="post" aria-pressed="false">文章</button>
+        <button type="button" class="chip-muted" data-archive-type="illustration" aria-pressed="false">插画</button>
+      </div>
+
+      <div class="mt-3 flex flex-wrap items-center gap-2">
+        <label for="archive-tag" class="text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-slate-400">
+          标签
+        </label>
+        <select
+          id="archive-tag"
+          class="min-w-0 flex-1 rounded-full border border-slate-200/80 bg-white/70 px-3 py-1.5 text-xs text-slate-600 outline-none transition focus:border-rose-300 focus:ring-2 focus:ring-rose-200/50 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 sm:max-w-xs"
+          data-archive-tag-select
+        >
+          <option value="">全部标签</option>
+          {data.tags.map((tag) => <option value={tag.name}>#{tag.name}（{tag.count}）</option>)}
+        </select>
+        <span class="text-[0.65rem] text-slate-400 dark:text-slate-500">
+          <span data-archive-count>{entries.length}</span> 条
+        </span>
+        <button
+          type="button"
+          class="ml-auto rounded-full px-2.5 py-1 text-[0.68rem] font-medium text-slate-400 transition hover:text-rose-500 dark:text-slate-500 dark:hover:text-rose-300"
+          data-archive-clear
+          hidden
+        >
+          清除筛选
+        </button>
+      </div>
+    </section>
+
+    {
+      groupedYears.map(([year, items]) => (
+        <section class="card overflow-hidden" data-archive-year aria-labelledby={`year-${year}`}>
+          <div class="flex items-baseline justify-between border-b border-slate-200/60 px-5 py-4 dark:border-white/10">
+            <h2 id={`year-${year}`} class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+              {year}
+            </h2>
+            <span class="text-[0.65rem] tracking-wide text-slate-400">{items.length} 条</span>
+          </div>
+
+          <ol class="relative px-5 py-4">
+            <span class="absolute bottom-5 left-[2.05rem] top-5 w-px bg-gradient-to-b from-rose-200 via-violet-200 to-transparent dark:from-rose-400/30 dark:via-violet-400/20" aria-hidden="true"></span>
+            {items.map((entry) => (
+              <li
+                class="group relative flex gap-3 py-2.5 pl-1"
+                data-archive-item
+                data-type={entry.type}
+                data-category={entry.category}
+                data-tags={JSON.stringify(entry.tags)}
+              >
+                <span class:list={[
+                  'relative z-10 mt-1.5 grid h-3.5 w-3.5 shrink-0 place-items-center rounded-full border-2 border-white shadow-sm dark:border-[#171322]',
+                  entry.type === 'post' ? 'bg-rose-400' : 'bg-violet-400',
+                ]}></span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <time datetime={entry.date} class="text-[0.65rem] tabular-nums tracking-wide text-slate-400">
+                      {formatDate(entry.date)}
+                    </time>
+                    <span class:list={[
+                      'rounded-full px-1.5 py-0.5 text-[0.58rem] font-medium',
+                      entry.type === 'post'
+                        ? 'bg-rose-50 text-rose-600 dark:bg-rose-400/10 dark:text-rose-200'
+                        : 'bg-violet-50 text-violet-600 dark:bg-violet-400/10 dark:text-violet-200',
+                    ]}>
+                      {entry.type === 'post' ? '文章' : '插画'}
+                    </span>
+                    <span class="text-[0.6rem] text-slate-400">{entry.category}</span>
+                  </div>
+                  <a
+                    href={entry.href}
+                    class="mt-0.5 block truncate font-display text-sm font-semibold text-slate-700 transition group-hover:text-rose-600 dark:text-slate-200 dark:group-hover:text-rose-300"
+                  >
+                    {entry.title}
+                  </a>
+                </div>
+                <a href={entry.href} class="mt-1 shrink-0 text-slate-300 transition group-hover:text-rose-400" aria-label={`打开：${entry.title}`}>
+                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    }
+
+    <div class="card p-10 text-center" data-archive-empty hidden={entries.length > 0}>
+      <p class="font-display text-xl text-ink dark:text-white">这个筛选下还没有内容</p>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">换一个类型或标签，或者清除筛选。</p>
+    </div>
+
+    <div class="flex justify-center pt-2">
+      <a href={withBase('/posts/')} class="chip-muted">
+        去文章列表
+        <svg viewBox="0 0 24 24" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+    </div>
+  </ThreeColumnLayout>
+</BaseLayout>
+
+<script>
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-archive-item]'));
+  const yearSections = Array.from(document.querySelectorAll<HTMLElement>('[data-archive-year]'));
+  const typeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-archive-type]'));
+  const tagSelect = document.querySelector<HTMLSelectElement>('[data-archive-tag-select]');
+  const countElement = document.querySelector<HTMLElement>('[data-archive-count]');
+  const emptyElement = document.querySelector<HTMLElement>('[data-archive-empty]');
+  const clearButton = document.querySelector<HTMLButtonElement>('[data-archive-clear]');
+
+  function state(): { type: string; tag: string } {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      type: params.get('type') ?? 'all',
+      tag: params.get('tag') ?? '',
+    };
+  }
+
+  function apply(): void {
+    const { type, tag } = state();
+    let visible = 0;
+
+    for (const item of items) {
+      const typeMatch = type === 'all' || item.dataset.type === type;
+      let tagMatch = true;
+      if (tag) {
+        try {
+          const tags: unknown = JSON.parse(item.dataset.tags ?? '[]');
+          tagMatch = Array.isArray(tags) && tags.includes(tag);
+        } catch {
+          tagMatch = false;
+        }
+      }
+      const show = typeMatch && tagMatch;
+      item.hidden = !show;
+      if (show) visible += 1;
+    }
+
+    for (const section of yearSections) {
+      const shown = section.querySelectorAll<HTMLElement>('[data-archive-item]:not([hidden])').length;
+      section.hidden = shown === 0;
+    }
+
+    typeButtons.forEach((button) => {
+      const active = (button.dataset.archiveType ?? 'all') === type;
+      button.classList.toggle('chip-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+
+    if (tagSelect) tagSelect.value = tag;
+    if (countElement) countElement.textContent = String(visible);
+    if (emptyElement) emptyElement.hidden = visible !== 0;
+    if (clearButton) clearButton.hidden = type === 'all' && !tag;
+  }
+
+  typeButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const url = new URL(window.location.href);
+      const type = button.dataset.archiveType ?? 'all';
+      if (type === 'all') url.searchParams.delete('type');
+      else url.searchParams.set('type', type);
+      window.history.pushState({}, '', `${url.pathname}${url.search}`);
+      apply();
+    });
+  });
+
+  tagSelect?.addEventListener('change', () => {
+    const url = new URL(window.location.href);
+    if (tagSelect.value) url.searchParams.set('tag', tagSelect.value);
+    else url.searchParams.delete('tag');
+    window.history.pushState({}, '', `${url.pathname}${url.search}`);
+    apply();
+  });
+
+  clearButton?.addEventListener('click', () => {
+    window.history.pushState({}, '', window.location.pathname);
+    apply();
+  });
+
+  window.addEventListener('popstate', apply);
+  apply();
+</script>

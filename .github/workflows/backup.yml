@@ -1,0 +1,62 @@
+name: Backup repository
+
+on:
+  schedule:
+    # 每周一 03:00 UTC = 北京时间 11:00
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create ZIP snapshot and full-history bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .backup
+          git archive --format=zip --prefix=yulong-yinyao/ --output=.backup/latest.zip HEAD
+          # 只打包本地分支（main）和标签。不要用 --all，否则会把 remote/backup
+          # 也打进 bundle，而 backup 分支里正好有上一周的 bundle，体积会滚雪球。
+          git bundle create .backup/latest.bundle --branches --tags
+          ls -lh .backup
+
+      - name: Publish to backup branch
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout --orphan backup
+          git rm -rf . --quiet || true
+          git add .backup/latest.zip .backup/latest.bundle
+          git commit -m "backup: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push --force origin HEAD:backup
+
+      - name: Summary
+        run: |
+          {
+            echo "### 备份完成"
+            echo ""
+            echo "- ZIP：\`.backup/latest.zip\`（当前 main 快照）"
+            echo "- Bundle：\`.backup/latest.bundle\`（main 的完整 Git 历史）"
+            echo "- 目标分支：\`backup\`（每次覆盖，只保留最新）"
+            echo ""
+            echo "手动下载：仓库 → 分支切换器 → backup → 下载文件。"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.astro/
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+pnpm-debug.log*
+.backup/
+.vscode/
+.idea/
+
+# 由 scripts/copy-cms.mjs 生成，构建时自动复制
+public/admin/sveltia-cms.js

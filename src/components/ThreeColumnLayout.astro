@@ -1,0 +1,72 @@
+---
+import LeftSidebar from './LeftSidebar.astro';
+import RightSidebar from './RightSidebar.astro';
+
+interface TagItem {
+  name: string;
+  count: number;
+  href: string;
+}
+
+interface RecentItem {
+  title: string;
+  href: string;
+  date: string;
+  type: 'post' | 'illustration';
+}
+
+interface Props {
+  postCount: number;
+  illustrationCount: number;
+  categoryCount: number;
+  tagCount: number;
+  tags: TagItem[];
+  recent: RecentItem[];
+}
+
+const {
+  postCount,
+  illustrationCount,
+  categoryCount,
+  tagCount,
+  tags,
+  recent,
+} = Astro.props;
+---
+
+<div class="mx-auto grid max-w-[88rem] items-start gap-5 px-4 py-7 sm:px-6 lg:grid-cols-[15.5rem_minmax(0,1fr)_16.5rem] lg:gap-6 lg:px-8 lg:py-10">
+  <div class="hidden lg:block">
+    <div class="sticky top-24">
+      <LeftSidebar postCount={postCount} illustrationCount={illustrationCount} />
+    </div>
+  </div>
+
+  <main id="main-content" class="min-w-0 space-y-5">
+    <slot />
+  </main>
+
+  <div class="hidden lg:block">
+    <div class="sticky top-24">
+      <RightSidebar
+        postCount={postCount}
+        illustrationCount={illustrationCount}
+        categoryCount={categoryCount}
+        tagCount={tagCount}
+        tags={tags}
+        recent={recent}
+      />
+    </div>
+  </div>
+
+  <div class="lg:hidden">
+    <RightSidebar
+      postCount={postCount}
+      illustrationCount={illustrationCount}
+      categoryCount={categoryCount}
+      tagCount={tagCount}
+      tags={tags}
+      recent={recent}
+      compact
+    />
+  </div>
+</div>

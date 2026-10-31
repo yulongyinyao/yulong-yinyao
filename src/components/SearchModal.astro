@@ -1,0 +1,270 @@
+---
+import { withBase } from '../consts';
+
+const pagefindUrl = withBase('/pagefind/pagefind.js');
+---
+
+<div
+  id="search-modal"
+  class="fixed inset-0 z-[70] hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="search-title"
+  data-pagefind-ignore
+  data-pagefind-url={pagefindUrl}
+>
+  <div class="absolute inset-0 bg-[#120e1f]/60 backdrop-blur-sm" data-search-backdrop></div>
+
+  <div class="relative mx-auto mt-[8vh] w-[min(92vw,44rem)] sm:mt-[12vh]">
+    <div class="card overflow-hidden shadow-2xl">
+      <div class="flex items-center gap-3 border-b border-slate-200/70 px-4 py-3 dark:border-white/10 sm:px-5">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 shrink-0 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"></circle>
+          <path d="m16 16 4.2 4.2" stroke-linecap="round"></path>
+        </svg>
+        <h2 id="search-title" class="sr-only">站内搜索</h2>
+        <form class="min-w-0 flex-1" role="search" data-search-form>
+          <label for="search-input" class="sr-only">搜索文章、插画和标签</label>
+          <input
+            id="search-input"
+            name="q"
+            type="search"
+            class="w-full border-0 bg-transparent p-0 text-base text-ink outline-none placeholder:text-slate-400 focus:ring-0 dark:text-white dark:placeholder:text-slate-500"
+            placeholder="搜索文章、插画、标签…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </form>
+        <button
+          type="button"
+          class="rounded-lg border border-slate-200 px-2 py-1 text-[0.65rem] font-medium text-slate-400 transition hover:text-slate-600 dark:border-white/10 dark:text-slate-500 dark:hover:text-slate-300"
+          data-search-close
+          aria-label="关闭搜索"
+        >
+          Esc
+        </button>
+      </div>
+
+      <div id="search-status" class="px-5 py-3 text-xs text-slate-500 dark:text-slate-400" aria-live="polite">
+        输入关键词开始搜索。支持中文与英文。
+      </div>
+
+      <div id="search-results" class="max-h-[55vh] overflow-y-auto px-2 pb-2"></div>
+
+      <div class="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200/70 px-5 py-2.5 text-[0.65rem] text-slate-400 dark:border-white/10 dark:text-slate-500">
+        <span>搜索索引由 Pagefind 在构建时生成</span>
+        <span class="hidden sm:inline">↑↓ 浏览 · Enter 打开 · Esc 关闭</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { withBase } from '../consts';
+
+  const modal = document.getElementById('search-modal');
+  const backdrop = modal?.querySelector<HTMLElement>('[data-search-backdrop]');
+  const form = modal?.querySelector<HTMLFormElement>('[data-search-form]');
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const status = document.getElementById('search-status');
+  const results = document.getElementById('search-results');
+  const closeButton = modal?.querySelector<HTMLButtonElement>('[data-search-close]');
+  const pagefindUrl = modal?.dataset.pagefindUrl ?? '';
+
+  type PagefindResult = { data: () => Promise<PagefindData> };
+  type PagefindData = {
+    url: string;
+    excerpt?: string;
+    meta?: Record<string, string | undefined>;
+  };
+  type PagefindModule = {
+    options: (options: Record<string, unknown>) => Promise<void>;
+    init: () => Promise<void>;
+    search: (term: string) => Promise<{ results: PagefindResult[] }>;
+  };
+
+  let pagefind: PagefindModule | null = null;
+  let pagefindPromise: Promise<PagefindModule> | null = null;
+  let searchTimer: number | undefined;
+  let requestId = 0;
+  let lastFocused: HTMLElement | null = null;
+
+  function setStatus(message: string): void {
+    if (status) status.textContent = message;
+  }
+
+  function focusableElements(): HTMLElement[] {
+    if (!modal) return [];
+    return Array.from(
+      modal.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter((element) => !element.hasAttribute('disabled') && element.offsetParent !== null);
+  }
+
+  function openModal(): void {
+    if (!modal) return;
+    lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    window.setTimeout(() => input?.focus(), 30);
+    if (!input?.value) setStatus('输入关键词开始搜索。支持中文与英文。');
+  }
+
+  function closeModal(): void {
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    lastFocused?.focus();
+  }
+
+  async function loadPagefind(): Promise<PagefindModule> {
+    if (pagefind) return pagefind;
+    if (pagefindPromise) return pagefindPromise;
+
+    pagefindPromise = import(/* @vite-ignore */ pagefindUrl).then(async (module: PagefindModule) => {
+      await module.options({ excerptLength: 32 });
+      await module.init();
+      pagefind = module;
+      return module;
+    });
+
+    return pagefindPromise;
+  }
+
+  function safeExcerpt(html: string): string {
+    const documentFragment = new DOMParser().parseFromString(html, 'text/html');
+    documentFragment.querySelectorAll('*').forEach((element) => {
+      if (element.tagName !== 'MARK') {
+        element.replaceWith(...Array.from(element.childNodes));
+      }
+    });
+    return documentFragment.body.innerHTML;
+  }
+
+  function renderResults(data: PagefindData[], term: string): void {
+    if (!results) return;
+    results.replaceChildren();
+
+    if (data.length === 0) {
+      setStatus(`没有找到与「${term}」相关的内容。`);
+      return;
+    }
+
+    setStatus(`找到 ${data.length} 条结果`);
+
+    for (const item of data) {
+      const link = document.createElement('a');
+      // Pagefind 输出的是站点根路径（/posts/...），项目页需要补上 /<repo> 前缀。
+      link.href = withBase(item.url);
+      link.className =
+        'group block rounded-xl px-3 py-3 transition hover:bg-rose-50/80 dark:hover:bg-white/5';
+      link.addEventListener('click', closeModal);
+
+      const title = document.createElement('p');
+      title.className =
+        'text-sm font-semibold text-slate-800 transition group-hover:text-rose-600 dark:text-slate-100 dark:group-hover:text-rose-300';
+      title.textContent = item.meta?.title || '未命名内容';
+
+      const excerpt = document.createElement('p');
+      excerpt.className = 'mt-1 line-clamp-2 text-xs leading-5 text-slate-500 dark:text-slate-400';
+      excerpt.innerHTML = safeExcerpt(item.excerpt ?? '');
+
+      const meta = document.createElement('p');
+      meta.className = 'mt-1 text-[0.62rem] tracking-wide text-slate-400 dark:text-slate-500';
+      meta.textContent = [item.meta?.type, item.meta?.category, item.meta?.date]
+        .filter(Boolean)
+        .join(' · ');
+
+      link.append(title, excerpt, meta);
+      results.append(link);
+    }
+
+    const first = results.querySelector<HTMLAnchorElement>('a');
+    first?.setAttribute('data-first-result', 'true');
+  }
+
+  async function runSearch(term: string): Promise<void> {
+    if (!term) {
+      if (results) results.replaceChildren();
+      setStatus('输入关键词开始搜索。支持中文与英文。');
+      return;
+    }
+
+    const current = ++requestId;
+    setStatus('搜索中…');
+
+    try {
+      const module = await loadPagefind();
+      const search = await module.search(term);
+      if (current !== requestId) return;
+
+      const data = await Promise.all(
+        search.results.slice(0, 8).map((result) => result.data()),
+      );
+      if (current !== requestId) return;
+
+      renderResults(data, term);
+    } catch {
+      if (current !== requestId) return;
+      if (results) results.replaceChildren();
+      setStatus('搜索索引尚未生成。开发模式请先运行 pnpm build && pnpm preview 再试。');
+    }
+  }
+
+  input?.addEventListener('input', () => {
+    window.clearTimeout(searchTimer);
+    const term = input.value.trim();
+    searchTimer = window.setTimeout(() => void runSearch(term), 180);
+  });
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    window.clearTimeout(searchTimer);
+    const term = input?.value.trim() ?? '';
+    void runSearch(term);
+    const first = results?.querySelector<HTMLAnchorElement>('a');
+    first?.focus();
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-search-open]').forEach((button) => {
+    button.addEventListener('click', openModal);
+  });
+
+  closeButton?.addEventListener('click', closeModal);
+  backdrop?.addEventListener('click', closeModal);
+
+  modal?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+    const elements = focusableElements();
+    if (elements.length === 0) return;
+
+    const first = elements[0];
+    const last = elements[elements.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const isShortcut = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k';
+    if (isShortcut) {
+      event.preventDefault();
+      if (modal?.classList.contains('hidden')) openModal();
+      else input?.focus();
+    }
+    if (event.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+  });
+</script>

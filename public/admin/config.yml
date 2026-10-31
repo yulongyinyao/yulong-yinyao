@@ -1,0 +1,166 @@
+# Sveltia CMS 配置
+# ---------------------------------------------------------------------------
+# 这个文件由 scripts/setup.mjs 维护：
+#   - backend.repo 会写成 "<你的GitHub用户名>/yulong-yinyao"
+#   - site_url / display_url / logo_url 会按 GitHub Pages 地址生成
+#   - 两个 collection 的 public_folder 会带上项目页的 base 路径
+#
+# 如果你改了仓库名或绑定了自定义域名，重新运行：
+#   pnpm setup
+# 不要只改一半，否则后台预览和站点图片路径会不一致。
+# ---------------------------------------------------------------------------
+
+backend:
+  name: github
+  repo: yulongyinyao/yulong-yinyao
+  branch: main
+  commit_messages:
+    create: "content: 新建 {{collection}} / {{slug}}"
+    update: "content: 更新 {{collection}} / {{slug}}"
+    delete: "content: 删除 {{collection}} / {{slug}}"
+    uploadMedia: "media: 上传 {{path}}"
+    deleteMedia: "media: 删除 {{path}}"
+
+# 项目页地址；绑定自定义域名后由 setup 改成域名根。
+site_url: https://yulongyinyao.github.io/yulong-yinyao/
+display_url: https://yulongyinyao.github.io/yulong-yinyao/
+logo_url: https://yulongyinyao.github.io/yulong-yinyao/avatar.svg
+
+# 让编辑器里的中文界面尽量友好；不支持时会被忽略。
+locale: zh_Hans
+
+# 文件名只用 ASCII，避免中文 URL 在不同浏览器/终端里出现转义差异。
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    description: 标题、日期、分类、标签、封面和 Markdown 正文。
+    folder: src/content/posts
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: "{{year}}-{{month}}-{{day}}-{{uuid_short}}"
+    preview_path: "posts/{{slug}}/"
+    sortable_fields: [date, title]
+    summary: "{{title}} · {{date}}"
+    media_folder: public/uploads/posts
+    public_folder: /yulong-yinyao/uploads/posts
+    fields:
+      - name: title
+        label: 标题
+        widget: string
+        hint: 会显示在卡片和文章页顶部。
+
+      - name: date
+        label: 日期
+        widget: datetime
+        type: date
+        default: "{{now}}"
+        input_timezone: utc
+        hint: 只保存日期，格式 YYYY-MM-DD。
+
+      - name: category
+        label: 分类
+        widget: select
+        default: essay
+        options:
+          - { label: 随笔, value: essay }
+          - { label: 技术, value: tech }
+          - { label: 生活, value: life }
+          - { label: 创作, value: creation }
+
+      - name: tags
+        label: 标签
+        widget: list
+        required: false
+        default: []
+        hint: 输入后按回车添加；标签可以自由创建，用来做筛选和归档。
+
+      - name: cover
+        label: 封面
+        widget: image
+        required: false
+        hint: 可选。建议 16:9 或 3:2，长边不超过 2000px，WebP/JPEG 优先。
+
+      - name: draft
+        label: 草稿
+        widget: boolean
+        default: false
+        hint: 草稿不会出现在文章列表、首页、归档和搜索结果里。
+
+      - name: body
+        label: 正文
+        widget: markdown
+        hint: 支持 Markdown；图片可以直接拖进编辑器，会存到 public/uploads/posts。
+
+  - name: illustrations
+    label: 插画
+    label_singular: 插画
+    description: 一组图片、标题、日期、分类、标签和描述。
+    folder: src/content/illustrations
+    create: true
+    delete: true
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    slug: "{{year}}-{{month}}-{{day}}-{{uuid_short}}"
+    preview_path: "illustrations/{{slug}}/"
+    sortable_fields: [date, title]
+    summary: "{{title}} · {{date}}"
+    media_folder: public/uploads/illustrations
+    public_folder: /yulong-yinyao/uploads/illustrations
+    fields:
+      - name: title
+        label: 标题
+        widget: string
+        hint: 这组插画的名字。
+
+      - name: date
+        label: 日期
+        widget: datetime
+        type: date
+        default: "{{now}}"
+        input_timezone: utc
+        hint: 只保存日期，格式 YYYY-MM-DD。
+
+      - name: category
+        label: 分类
+        widget: select
+        default: original
+        options:
+          - { label: 原创, value: original }
+          - { label: 练习, value: practice }
+          - { label: 同人, value: fanart }
+          - { label: 约稿, value: commission }
+
+      - name: tags
+        label: 标签
+        widget: list
+        required: false
+        default: []
+        hint: 输入后按回车添加；标签可以自由创建。
+
+      - name: images
+        label: 图片
+        widget: image
+        multiple: true
+        required: true
+        hint: 点“添加图片”可以一次选多张；手机上会打开相册/相机。建议长边不超过 2000px。
+
+      - name: description
+        label: 描述
+        widget: text
+        required: false
+        hint: 可以写创作想法、使用的笔刷或背景说明。
+
+      - name: draft
+        label: 草稿
+        widget: boolean
+        default: false
+        hint: 草稿不会出现在插画列表、首页、归档和搜索结果里。

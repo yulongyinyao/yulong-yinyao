@@ -1,0 +1,116 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import SearchModal from '../components/SearchModal.astro';
+import { isConfigured, site, withBase } from '../consts';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  pagefindIgnore?: boolean;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = site.description,
+  image = site.ogImage,
+  pagefindIgnore = true,
+  bodyClass = '',
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.description}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://example.com').href;
+const ogImage = new URL(withBase(image), Astro.site ?? 'https://example.com').href;
+const configured = isConfigured();
+---
+
+<!doctype html>
+<html lang="zh-CN" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+    <meta name="theme-color" content="#fbf7f4" />
+
+    <!-- 私人站点：禁止搜索引擎抓取、索引、缓存与快照。 -->
+    <meta
+      name="robots"
+      content="noindex, nofollow, noarchive, nosnippet, noimageindex, max-image-preview:none"
+    />
+    <meta
+      name="googlebot"
+      content="noindex, nofollow, noarchive, nosnippet, noimageindex, max-image-preview:none"
+    />
+    <meta name="bingbot" content="noindex, nofollow, noarchive, nosnippet" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <link rel="apple-touch-icon" href={withBase('/avatar.svg')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline>
+      (() => {
+        try {
+          const saved = localStorage.getItem('theme');
+          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const dark = saved === 'dark' || (!saved && prefersDark);
+          document.documentElement.classList.toggle('dark', dark);
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch {
+          /* Ignore storage failures and keep the light theme. */
+        }
+      })();
+    </script>
+
+    <slot name="head" />
+  </head>
+
+  <body
+    class:list={['min-h-dvh text-ink antialiased dark:text-slate-100', bodyClass]}
+    data-pagefind-ignore={pagefindIgnore ? '' : undefined}
+  >
+    <a
+      href="#main-content"
+      class="sr-only z-[100] rounded-full bg-white px-4 py-2 text-sm font-medium text-ink shadow-lg focus:not-sr-only focus:fixed focus:left-4 focus:top-4 dark:bg-slate-900 dark:text-white"
+    >
+      跳到主要内容
+    </a>
+
+    {
+      !configured && (
+        <div class="border-b border-amber-200/70 bg-amber-50/90 px-4 py-2 text-center text-[0.7rem] text-amber-800 dark:border-amber-300/20 dark:bg-amber-400/10 dark:text-amber-200">
+          站点尚未配置 GitHub 用户名。运行
+          <code class="rounded bg-amber-100 px-1 py-0.5 font-mono text-[0.65rem] dark:bg-amber-400/15">pnpm setup</code>
+          或编辑 <code class="rounded bg-amber-100 px-1 py-0.5 font-mono text-[0.65rem] dark:bg-amber-400/15">config/site.json</code>。
+        </div>
+      )
+    }
+
+    <Header />
+
+    <slot />
+
+    <Footer />
+    <SearchModal />
+  </body>
+</html>

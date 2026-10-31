@@ -1,0 +1,91 @@
+---
+import { withBase } from '../consts';
+
+interface CategoryCount {
+  slug: string;
+  label: string;
+  count: number;
+}
+
+interface Group {
+  label: string;
+  total: number;
+  unit?: string;
+  baseHref: string;
+  categories: CategoryCount[];
+}
+
+interface Props {
+  groups: Group[];
+}
+
+const { groups } = Astro.props;
+---
+
+<section class="card overflow-hidden" aria-label="分类导航">
+  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/60 px-5 py-3.5 dark:border-white/10">
+    <h2 class="flex items-center gap-2 font-display text-base font-semibold text-ink dark:text-white">
+      <svg viewBox="0 0 24 24" class="h-4 w-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+        <path d="M4 6h16M4 12h10M4 18h7" stroke-linecap="round"></path>
+      </svg>
+      分类导航
+    </h2>
+    <a href={withBase('/archive/')} class="chip-muted">
+      归档
+      <svg viewBox="0 0 24 24" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </a>
+  </div>
+
+  <div class="divide-y divide-slate-200/50 dark:divide-white/5">
+    {
+      groups.map((group) => (
+        <div class="px-5 py-4" data-category-group data-base-href={group.baseHref}>
+          <div class="mb-2.5 flex items-baseline justify-between gap-2">
+            <h3 class="text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+              {group.label}
+            </h3>
+            <span class="text-[0.65rem] text-slate-400 dark:text-slate-500">{group.total} {group.unit ?? '篇'}</span>
+          </div>
+          <div class="flex flex-wrap gap-1.5">
+            <a
+              href={group.baseHref}
+              class="chip-muted"
+              data-category-link
+              data-filter-link
+              data-category=""
+            >
+              全部
+            </a>
+            {group.categories.map((category) => (
+              <a
+                href={`${group.baseHref}?category=${encodeURIComponent(category.slug)}`}
+                class="chip-muted"
+                data-category-link
+                data-filter-link
+                data-category={category.slug}
+              >
+                {category.label}
+                <span class="text-[0.6rem] opacity-50">{category.count}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const selected = params.get('category') ?? '';
+
+  document.querySelectorAll<HTMLElement>('[data-category-group]').forEach((group) => {
+    group.querySelectorAll<HTMLAnchorElement>('[data-category-link]').forEach((link) => {
+      const isActive = (link.dataset.category ?? '') === selected;
+      link.classList.toggle('chip-active', isActive);
+      if (isActive) link.setAttribute('aria-current', 'true');
+    });
+  });
+</script>

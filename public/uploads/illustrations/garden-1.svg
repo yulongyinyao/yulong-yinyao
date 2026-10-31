@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" role="img" aria-label="夜色中的花园与一艘小船">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#141a35"/>
+      <stop offset="0.45" stop-color="#3d3566"/>
+      <stop offset="0.75" stop-color="#8f6b9d"/>
+      <stop offset="1" stop-color="#f0b6c6"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fffdf2"/>
+      <stop offset="0.8" stop-color="#ffe9b8"/>
+      <stop offset="1" stop-color="#ffd28f"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff1b8" stop-opacity="0.9"/>
+      <stop offset="0.45" stop-color="#ffe0a8" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ffe0a8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6e6099"/>
+      <stop offset="1" stop-color="#1c1937"/>
+    </linearGradient>
+    <linearGradient id="dress" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f6e9ff"/>
+      <stop offset="1" stop-color="#c9b4ef"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+    <filter id="tiny" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="1500" fill="url(#sky)"/>
+  <circle cx="850" cy="300" r="250" fill="url(#glow)"/>
+  <circle cx="850" cy="300" r="108" fill="url(#moon)"/>
+  <circle cx="820" cy="275" r="16" fill="#eed8ad" opacity="0.4"/>
+  <circle cx="880" cy="330" r="10" fill="#eed8ad" opacity="0.35"/>
+
+  <g fill="#fff" opacity="0.8">
+    <circle cx="160" cy="180" r="2.2"/>
+    <circle cx="280" cy="120" r="1.6"/>
+    <circle cx="420" cy="220" r="2"/>
+    <circle cx="540" cy="100" r="1.4"/>
+    <circle cx="1040" cy="150" r="2"/>
+    <circle cx="1120" cy="280" r="1.5"/>
+    <circle cx="980" cy="90" r="1.8"/>
+    <circle cx="700" cy="160" r="1.4"/>
+  </g>
+  <g fill="#ffe8f0" opacity="0.55">
+    <path d="M240 300c8-20 18-20 26 0-8 20-18 20-26 0Z"/>
+    <path d="M1010 380c7-16 16-16 23 0-7 16-16 16-23 0Z"/>
+    <path d="M420 400c6-14 14-14 20 0-6 14-14 14-20 0Z"/>
+  </g>
+
+  <path d="M0 980c180-80 320-50 500-10 210 46 340 12 520-30 70-16 130-14 180 2v558H0Z" fill="#2b2548"/>
+  <path d="M0 1080c220-60 390-22 580 12 200 36 380 0 620-44v452H0Z" fill="url(#water)"/>
+  <g stroke="#b9a6df" stroke-width="2" opacity="0.25" fill="none">
+    <path d="M100 1160c120-18 240-18 360 0"/>
+    <path d="M580 1240c140-20 280-20 420 0"/>
+    <path d="M180 1320c160-18 320-18 480 0"/>
+    <path d="M700 1400c120-16 240-16 360 0"/>
+  </g>
+
+  <g transform="translate(760 1170) scale(0.9)">
+    <path d="M0 60c80 34 220 34 300 0l-34 86c-70 26-160 26-232 0Z" fill="#2c2448"/>
+    <path d="M22 60c74 22 174 22 256 0" fill="none" stroke="#c9a9e8" stroke-width="4" opacity="0.7"/>
+    <path d="M150 60V-90" stroke="#e6d4b4" stroke-width="5"/>
+    <path d="M156-84c62 18 104 48 124 88-54-18-96-26-124-26Z" fill="#f6e9ff" opacity="0.9"/>
+  </g>
+
+  <g transform="translate(260 980) scale(1.25)">
+    <path d="M-60 360c0-90 30-150 90-190h40c60 40 90 100 90 190Z" fill="url(#dress)"/>
+    <circle cx="80" cy="145" r="38" fill="#ffe6d8"/>
+    <path d="M34 150c-6-70 14-118 50-118 38 0 56 48 48 118-4 38-20 54-48 54s-46-16-50-54Z" fill="#ffe6d8"/>
+    <path d="M32 140c2-52 22-86 54-86 30 0 50 26 54 72-18-8-30-30-38-46-16 22-38 42-70 48Z" fill="#3e3055"/>
+    <path d="M28 150c-20 40-22 92-6 128 6 14 16 10 16-4 2-34 4-66 4-98Z" fill="#3e3055"/>
+    <path d="M130 150c20 40 22 92 6 128-6 14-16 10-16-4-2-34-4-66-4-98Z" fill="#3e3055"/>
+    <g fill="#3e3055">
+      <ellipse cx="64" cy="150" rx="5" ry="7"/>
+      <ellipse cx="96" cy="150" rx="5" ry="7"/>
+    </g>
+    <path d="M72 172c6 4 12 4 18 0" fill="none" stroke="#d98b93" stroke-width="3" stroke-linecap="round"/>
+    <path d="M-8 250c30 14 58 14 88 0" fill="none" stroke="#d9c6f5" stroke-width="3" opacity="0.8"/>
+  </g>
+
+  <g fill="#ffe6a8">
+    <g transform="translate(160 1080)">
+      <circle r="7"/>
+      <g fill="#ffe6a8" opacity="0.95">
+        <ellipse cx="0" cy="-20" rx="8" ry="16"/>
+        <ellipse cx="19" cy="-6" rx="8" ry="16" transform="rotate(72 19 -6)"/>
+        <ellipse cx="12" cy="17" rx="8" ry="16" transform="rotate(144 12 17)"/>
+        <ellipse cx="-12" cy="17" rx="8" ry="16" transform="rotate(216 -12 17)"/>
+        <ellipse cx="-19" cy="-6" rx="8" ry="16" transform="rotate(288 -19 -6)"/>
+      </g>
+    </g>
+    <g transform="translate(430 1180) scale(0.7)">
+      <circle r="7"/>
+      <g opacity="0.95">
+        <ellipse cx="0" cy="-20" rx="8" ry="16"/>
+        <ellipse cx="19" cy="-6" rx="8" ry="16" transform="rotate(72 19 -6)"/>
+        <ellipse cx="12" cy="17" rx="8" ry="16" transform="rotate(144 12 17)"/>
+        <ellipse cx="-12" cy="17" rx="8" ry="16" transform="rotate(216 -12 17)"/>
+        <ellipse cx="-19" cy="-6" rx="8" ry="16" transform="rotate(288 -19 -6)"/>
+      </g>
+    </g>
+    <g transform="translate(980 1290) scale(0.8)">
+      <circle r="7"/>
+      <g opacity="0.95">
+        <ellipse cx="0" cy="-20" rx="8" ry="16"/>
+        <ellipse cx="19" cy="-6" rx="8" ry="16" transform="rotate(72 19 -6)"/>
+        <ellipse cx="12" cy="17" rx="8" ry="16" transform="rotate(144 12 17)"/>
+        <ellipse cx="-12" cy="17" rx="8" ry="16" transform="rotate(216 -12 17)"/>
+        <ellipse cx="-19" cy="-6" rx="8" ry="16" transform="rotate(288 -19 -6)"/>
+      </g>
+    </g>
+  </g>
+  <g fill="#ffe6a8" filter="url(#soft)" opacity="0.55">
+    <circle cx="160" cy="1080" r="40"/>
+    <circle cx="430" cy="1180" r="26"/>
+    <circle cx="980" cy="1290" r="30"/>
+  </g>
+
+  <g fill="none" stroke="#5f4f84" stroke-width="6" opacity="0.7">
+    <path d="M80 1240c-10-80 10-140 60-180"/>
+    <path d="M1100 1200c10-70-6-130-50-170"/>
+    <path d="M340 1380c-4-60 8-110 36-150"/>
+  </g>
+</svg>

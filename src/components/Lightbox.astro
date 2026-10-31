@@ -1,0 +1,182 @@
+---
+interface GalleryImage {
+  src: string;
+  alt: string;
+}
+
+interface Props {
+  images: GalleryImage[];
+  title: string;
+}
+
+const { images, title } = Astro.props;
+---
+
+<div id="illustration-gallery" class="grid gap-3 sm:grid-cols-2" data-pagefind-ignore>
+  {
+    images.map((image, index) => (
+      <button
+        type="button"
+        class="group relative block overflow-hidden rounded-2xl border border-white/60 bg-white/40 text-left shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:border-white/10 dark:bg-white/5"
+        data-lightbox-trigger
+        data-index={index}
+        data-src={image.src}
+        data-alt={image.alt}
+        aria-label={`放大查看第 ${index + 1} 张：${image.alt}`}
+      >
+        <img
+          src={image.src}
+          alt={image.alt}
+          class="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          loading={index === 0 ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+        <span class="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/55 to-transparent px-3 pb-2.5 pt-8 text-[0.65rem] text-white/90 opacity-0 transition group-hover:opacity-100">
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <span class="inline-flex items-center gap-1">
+            <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="11" cy="11" r="6.5"></circle>
+              <path d="m16 16 4.2 4.2M8 11h6M11 8v6" stroke-linecap="round"></path>
+            </svg>
+            放大
+          </span>
+        </span>
+      </button>
+    ))
+  }
+</div>
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[80] hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label={`${title} 图片预览`}
+  aria-hidden="true"
+>
+  <div class="absolute inset-0 bg-[#08060e]/90 backdrop-blur-sm" data-lightbox-close></div>
+
+  <div class="relative flex h-full flex-col p-4 sm:p-6">
+    <div class="flex items-center justify-between gap-4 text-white/80">
+      <p class="truncate font-display text-sm sm:text-base">{title}</p>
+      <button
+        type="button"
+        class="grid h-10 w-10 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white/20"
+        data-lightbox-close
+        aria-label="关闭图片预览"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="relative flex min-h-0 flex-1 items-center justify-center">
+      <button
+        type="button"
+        class="absolute left-0 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 sm:left-2"
+        data-lightbox-prev
+        aria-label="上一张"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="m15 5-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+
+      <figure class="flex max-h-full max-w-[min(92vw,72rem)] flex-col items-center gap-3">
+        <img
+          data-lightbox-image
+          src=""
+          alt=""
+          class="max-h-[78vh] max-w-full rounded-xl object-contain shadow-2xl"
+        />
+        <figcaption class="max-w-2xl text-center text-xs leading-5 text-white/60" data-lightbox-caption></figcaption>
+      </figure>
+
+      <button
+        type="button"
+        class="absolute right-0 z-10 grid h-11 w-11 place-items-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition hover:bg-white/20 disabled:opacity-30 sm:right-2"
+        data-lightbox-next
+        aria-label="下一张"
+      >
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+
+    <p class="pt-3 text-center text-[0.68rem] tracking-[0.2em] text-white/50" data-lightbox-counter></p>
+  </div>
+</div>
+
+<script>
+  const gallery = document.getElementById('illustration-gallery');
+  const lightbox = document.getElementById('lightbox');
+  const triggers = Array.from(gallery?.querySelectorAll<HTMLButtonElement>('[data-lightbox-trigger]') ?? []);
+  const image = lightbox?.querySelector<HTMLImageElement>('[data-lightbox-image]');
+  const caption = lightbox?.querySelector<HTMLElement>('[data-lightbox-caption]');
+  const counter = lightbox?.querySelector<HTMLElement>('[data-lightbox-counter]');
+  const previous = lightbox?.querySelector<HTMLButtonElement>('[data-lightbox-prev]');
+  const next = lightbox?.querySelector<HTMLButtonElement>('[data-lightbox-next]');
+  let current = 0;
+  let lastFocused: HTMLElement | null = null;
+
+  function show(index: number): void {
+    if (triggers.length === 0) return;
+    current = (index + triggers.length) % triggers.length;
+    const trigger = triggers[current];
+    if (image) {
+      image.src = trigger.dataset.src ?? '';
+      image.alt = trigger.dataset.alt ?? '';
+    }
+    if (caption) caption.textContent = trigger.dataset.alt ?? '';
+    if (counter) {
+      counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(triggers.length).padStart(2, '0')}`;
+    }
+    if (previous) previous.disabled = current === 0;
+    if (next) next.disabled = current === triggers.length - 1;
+  }
+
+  function open(index: number): void {
+    if (!lightbox) return;
+    lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    lightbox.classList.remove('hidden');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    show(index);
+    lightbox.querySelector<HTMLButtonElement>('button[data-lightbox-close]')?.focus();
+  }
+
+  function close(): void {
+    if (!lightbox) return;
+    lightbox.classList.add('hidden');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    lastFocused?.focus();
+  }
+
+  triggers.forEach((trigger, index) => {
+    trigger.addEventListener('click', () => open(index));
+  });
+
+  lightbox?.querySelectorAll<HTMLElement>('[data-lightbox-close]').forEach((element) => {
+    element.addEventListener('click', close);
+  });
+
+  previous?.addEventListener('click', () => show(current - 1));
+  next?.addEventListener('click', () => show(current + 1));
+
+  document.addEventListener('keydown', (event) => {
+    if (!lightbox || lightbox.classList.contains('hidden')) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      close();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      show(current - 1);
+    } else if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      show(current + 1);
+    }
+  });
+</script>

@@ -1,0 +1,25 @@
+# 这是一个私人站点，禁止所有搜索引擎抓取。
+# 注意：GitHub Pages 项目页的 robots.txt 实际地址是
+# https://<用户名>.github.io/<仓库名>/robots.txt
+# 爬虫只会读取域名根目录的 /robots.txt；所以页面里的
+# <meta name="robots" content="noindex, nofollow"> 才是主要防线。
+# 绑定自定义域名后，这个文件会部署到域名根目录，两者同时生效。
+
+User-agent: *
+Disallow: /
+
+# 常见爬虫显式列出，避免个别爬虫忽略通配符。
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+User-agent: DuckDuckBot
+Disallow: /

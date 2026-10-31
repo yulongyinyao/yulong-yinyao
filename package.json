@@ -1,0 +1,37 @@
+{
+  "name": "yulong-yinyao",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "yulong_yinyao 的私人文章与插画存档",
+  "packageManager": "pnpm@11.28.5",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "predev": "node scripts/copy-cms.mjs",
+    "build": "astro build && pagefind --site dist",
+    "prebuild": "node scripts/copy-cms.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "cms:copy": "node scripts/copy-cms.mjs",
+    "setup": "node scripts/setup.mjs",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.3.5",
+    "@sveltia/cms": "0.256.1",
+    "@tailwindcss/typography": "0.5.20",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "7.4.4",
+    "tailwindcss": "4.3.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "pagefind": "1.5.2",
+    "prettier": "3.9.10",
+    "prettier-plugin-astro": "1.1.2",
+    "typescript": "^6.0.3"
+  }
+}

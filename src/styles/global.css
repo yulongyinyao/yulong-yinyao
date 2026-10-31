@@ -1,0 +1,136 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    "Inter", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+    system-ui, sans-serif;
+  --font-display:
+    "Noto Serif SC", "Songti SC", "STSong", "SimSun", ui-serif, Georgia, serif;
+  --color-cream: #fbf7f4;
+  --color-ink: #2c2438;
+  --color-sakura: #e8879f;
+  --color-lavender: #9b86c9;
+}
+
+:root {
+  color-scheme: light;
+  --page-bg: #fbf7f4;
+  --page-fg: #2c2438;
+}
+
+html.dark {
+  color-scheme: dark;
+  --page-bg: #0f0d18;
+  --page-fg: #e9e4f2;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  min-height: 100dvh;
+  background-color: var(--page-bg);
+  color: var(--page-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #f3b6c6;
+  color: #2c2438;
+}
+
+/* Subtle paper grain, no external assets. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(120, 96, 140, 0.14) 0.6px, transparent 0.6px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(to bottom, black, transparent 70%);
+}
+
+html.dark body::before {
+  opacity: 0.22;
+  background-image: radial-gradient(rgba(220, 200, 255, 0.18) 0.6px, transparent 0.6px);
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-white/70 bg-white/70 shadow-[0_18px_50px_-28px_rgba(76,52,96,0.45)] backdrop-blur-xl;
+    @apply dark:border-white/10 dark:bg-white/[0.055] dark:shadow-[0_18px_60px_-30px_rgba(0,0,0,0.85)];
+  }
+
+  .card-soft {
+    @apply rounded-2xl border border-white/60 bg-white/55 backdrop-blur-lg;
+    @apply dark:border-white/10 dark:bg-white/[0.045];
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-rose-200/70 bg-rose-50/70 px-2.5 py-1 text-[0.7rem] font-medium leading-none text-rose-700 transition;
+    @apply hover:border-rose-300 hover:bg-rose-100 dark:border-rose-300/20 dark:bg-rose-400/10 dark:text-rose-200 dark:hover:bg-rose-400/20;
+  }
+
+  .chip-muted {
+    @apply inline-flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/60 px-2.5 py-1 text-[0.7rem] font-medium leading-none text-slate-600 transition;
+    @apply hover:border-violet-300 hover:text-violet-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:text-violet-200;
+  }
+
+  .chip-active {
+    @apply border-transparent bg-gradient-to-r from-rose-400 to-violet-400 text-white shadow-sm;
+    @apply hover:from-rose-400 hover:to-violet-400;
+  }
+
+  .nav-link {
+    @apply relative rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-white/60 hover:text-ink;
+    @apply dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white;
+  }
+
+  .nav-link-active {
+    @apply bg-white/70 text-ink shadow-sm dark:bg-white/10 dark:text-white;
+  }
+
+  .icon-button {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/60 text-slate-600 shadow-sm backdrop-blur transition;
+    @apply hover:-translate-y-0.5 hover:border-rose-200 hover:text-rose-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:text-rose-200;
+  }
+
+  .prose-custom {
+    @apply prose prose-slate max-w-none prose-headings:font-display prose-headings:font-semibold prose-headings:tracking-tight;
+    @apply prose-p:leading-8 prose-a:text-rose-600 prose-a:underline-offset-4 hover:prose-a:text-rose-500;
+    @apply prose-blockquote:border-l-rose-300 prose-blockquote:bg-rose-50/50 prose-blockquote:py-1 prose-blockquote:not-italic;
+    @apply prose-img:rounded-2xl prose-img:shadow-lg prose-hr:border-slate-200;
+    @apply dark:prose-invert dark:prose-a:text-rose-300 dark:prose-blockquote:border-l-rose-400/40 dark:prose-blockquote:bg-white/5 dark:prose-hr:border-white/10;
+  }
+}
+
+/* View transitions: gentle cross-fade, disabled when the user asks for less motion. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 180ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

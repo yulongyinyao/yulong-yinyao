@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="柔和的夜色与花园插画">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2350"/>
+      <stop offset="0.38" stop-color="#6f5b9e"/>
+      <stop offset="0.68" stop-color="#d79ab8"/>
+      <stop offset="1" stop-color="#ffe4e9"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fffdf4"/>
+      <stop offset="0.7" stop-color="#fff3cf"/>
+      <stop offset="1" stop-color="#ffd9a8"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff1c9" stop-opacity="0.85"/>
+      <stop offset="0.55" stop-color="#ffd6e2" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#ffd6e2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5b4a86"/>
+      <stop offset="1" stop-color="#2c2448"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9284c7"/>
+      <stop offset="1" stop-color="#3a315e"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="smallSoft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1200" cy="190" r="260" fill="url(#glow)"/>
+  <circle cx="1200" cy="190" r="104" fill="url(#moon)"/>
+  <circle cx="1170" cy="168" r="16" fill="#f2dfb7" opacity="0.45"/>
+  <circle cx="1232" cy="222" r="10" fill="#f2dfb7" opacity="0.35"/>
+  <circle cx="1224" cy="152" r="7" fill="#f2dfb7" opacity="0.3"/>
+
+  <g fill="#fff8ee" opacity="0.8">
+    <circle cx="140" cy="150" r="2.6"/>
+    <circle cx="260" cy="96" r="1.8"/>
+    <circle cx="410" cy="180" r="2.2"/>
+    <circle cx="540" cy="110" r="1.5"/>
+    <circle cx="690" cy="160" r="2.8"/>
+    <circle cx="820" cy="80" r="1.7"/>
+    <circle cx="940" cy="210" r="2.1"/>
+    <circle cx="1040" cy="120" r="1.6"/>
+    <circle cx="1330" cy="100" r="2.2"/>
+    <circle cx="1450" cy="240" r="1.8"/>
+    <circle cx="1510" cy="130" r="2.6"/>
+    <circle cx="350" cy="290" r="1.6"/>
+    <circle cx="760" cy="260" r="1.4"/>
+  </g>
+
+  <g fill="#ffe9f2" opacity="0.55">
+    <path d="M210 250c8-20 18-20 26 0-8 20-18 20-26 0Z"/>
+    <path d="M462 330c7-17 16-17 23 0-7 17-16 17-23 0Z"/>
+    <path d="M980 300c6-14 13-14 19 0-6 14-13 14-19 0Z"/>
+    <path d="M1390 340c7-17 16-17 23 0-7 17-16 17-23 0Z"/>
+  </g>
+
+  <g filter="url(#soft)" opacity="0.75">
+    <ellipse cx="300" cy="520" rx="280" ry="64" fill="#f7d6e6"/>
+    <ellipse cx="560" cy="470" rx="190" ry="44" fill="#f3e3f8"/>
+    <ellipse cx="1160" cy="520" rx="300" ry="58" fill="#f7d6e6"/>
+    <ellipse cx="940" cy="450" rx="150" ry="38" fill="#f3e3f8"/>
+  </g>
+
+  <path d="M0 690C180 610 330 650 510 690c190 43 330 18 500-22 190-45 380-38 590 34v198H0Z" fill="url(#hill)"/>
+  <path d="M0 760c220-72 380-48 560-8 210 47 350 14 520-28 190-47 360-10 520 52v124H0Z" fill="#3c315f" opacity="0.92"/>
+  <path d="M0 812c260-54 430-30 640 8 210 38 420 6 600-30 150-30 270-20 360 10v100H0Z" fill="url(#water)" opacity="0.9"/>
+
+  <g fill="#ffd9e7" opacity="0.85">
+    <path d="M170 704c8-18 18-18 26 0-8 18-18 18-26 0Z"/>
+    <path d="M230 742c6-14 14-14 20 0-6 14-14 14-20 0Z"/>
+    <path d="M1320 710c7-16 16-16 23 0-7 16-16 16-23 0Z"/>
+    <path d="M1390 676c6-14 14-14 20 0-6 14-14 14-20 0Z"/>
+    <path d="M1150 756c7-16 16-16 23 0-7 16-16 16-23 0Z"/>
+  </g>
+
+  <g transform="translate(1130 690) scale(1.1)" fill="#2a2342">
+    <path d="M0 0c4-14 9-34 30-34 21 0 27 20 31 34l9 62H-9Z"/>
+    <circle cx="30" cy="-48" r="22"/>
+    <path d="M8-56c8-18 36-24 46-4 5 10 1 21-3 24-4-15-14-22-23-22-10 0-16 7-20 2Z" fill="#4b3b6e"/>
+    <path d="M-6 26c22 12 50 12 72 0" fill="none" stroke="#5b4a86" stroke-width="4"/>
+  </g>
+
+  <g fill="#ffe8a8" opacity="0.9">
+    <circle cx="250" cy="710" r="5"/>
+    <circle cx="292" cy="690" r="3.5"/>
+    <circle cx="340" cy="724" r="4"/>
+    <circle cx="1250" cy="744" r="4.5"/>
+    <circle cx="1300" cy="720" r="3"/>
+    <circle cx="1190" cy="700" r="3.5"/>
+  </g>
+  <g fill="#ffe8a8" filter="url(#smallSoft)" opacity="0.5">
+    <circle cx="250" cy="710" r="14"/>
+    <circle cx="340" cy="724" r="12"/>
+    <circle cx="1250" cy="744" r="13"/>
+  </g>
+</svg>

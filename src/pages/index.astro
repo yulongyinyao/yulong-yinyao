@@ -1,0 +1,126 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ThreeColumnLayout from '../components/ThreeColumnLayout.astro';
+import CategoryNav from '../components/CategoryNav.astro';
+import PostCard from '../components/PostCard.astro';
+import IllustrationCard from '../components/IllustrationCard.astro';
+import { withBase } from '../consts';
+import { getSiteData } from '../lib/content';
+
+const data = await getSiteData();
+const latestPosts = data.posts.slice(0, 3);
+const latestIllustrations = data.illustrations.slice(0, 2);
+
+const groups = [
+  {
+    label: '文章分类',
+    total: data.postCount,
+    unit: '篇',
+    baseHref: withBase('/posts/'),
+    categories: data.postCategories,
+  },
+  {
+    label: '插画分类',
+    total: data.illustrationCount,
+    unit: '幅',
+    baseHref: withBase('/illustrations/'),
+    categories: data.illustrationCategories,
+  },
+];
+---
+
+<BaseLayout description="文字与画的私人存档：文章、插画、分类与标签。">
+  <Hero />
+
+  <ThreeColumnLayout
+    postCount={data.postCount}
+    illustrationCount={data.illustrationCount}
+    categoryCount={data.categoryCount}
+    tagCount={data.tagCount}
+    tags={data.tags}
+    recent={data.recent}
+  >
+    <CategoryNav groups={groups} />
+
+    <section aria-labelledby="latest-posts">
+      <div class="mb-3 flex items-end justify-between gap-3 px-1">
+        <div>
+          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-rose-400">Writing</p>
+          <h2 id="latest-posts" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+            最近写的
+          </h2>
+        </div>
+        <a href={withBase('/posts/')} class="chip-muted">
+          全部文章
+          <svg viewBox="0 0 24 24" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+
+      {
+        latestPosts.length > 0 ? (
+          <div class="grid gap-4">
+            {latestPosts.map((post) => <PostCard post={post} />)}
+          </div>
+        ) : (
+          <div class="card p-8 text-center">
+            <p class="font-display text-lg text-ink dark:text-white">还没有文章</p>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              打开 <a href={withBase('/admin/')} class="text-rose-500 underline underline-offset-4">/admin</a> 写下第一篇。
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <section aria-labelledby="latest-illustrations">
+      <div class="mb-3 flex items-end justify-between gap-3 px-1">
+        <div>
+          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-violet-400">Drawing</p>
+          <h2 id="latest-illustrations" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+            最近画的
+          </h2>
+        </div>
+        <a href={withBase('/illustrations/')} class="chip-muted">
+          全部插画
+          <svg viewBox="0 0 24 24" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+      </div>
+
+      {
+        latestIllustrations.length > 0 ? (
+          <div class="grid gap-4 sm:grid-cols-2">
+            {latestIllustrations.map((illustration) => (
+              <IllustrationCard illustration={illustration} compact />
+            ))}
+          </div>
+        ) : (
+          <div class="card p-8 text-center">
+            <p class="font-display text-lg text-ink dark:text-white">还没有插画</p>
+            <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              打开 <a href={withBase('/admin/')} class="text-rose-500 underline underline-offset-4">/admin</a> 上传第一张。
+            </p>
+          </div>
+        )
+      }
+    </section>
+
+    <section class="card relative overflow-hidden p-6" aria-label="站点说明">
+      <div class="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-rose-200/40 blur-2xl dark:bg-rose-400/10"></div>
+      <div class="relative">
+        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-400">A note</p>
+        <p class="mt-2 max-w-xl font-display text-lg leading-8 text-ink dark:text-slate-100">
+          这里是一个不追赶更新的私人存档。文字和画都按时间收好，分类是抽屉，标签是书签。
+        </p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <a href={withBase('/archive/')} class="chip">按时间归档</a>
+          <a href={withBase('/about/')} class="chip-muted">关于这个站点</a>
+        </div>
+      </div>
+    </section>
+  </ThreeColumnLayout>
+</BaseLayout>
