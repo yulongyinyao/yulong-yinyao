@@ -114,11 +114,12 @@ pnpm dev
 打开：
 
 - 站点：<http://localhost:4321/yulong-yinyao/>
-- 后台：<http://localhost:4321/yulong-yinyao/admin/>
+- 编辑器：<http://localhost:4321/yulong-yinyao/editor/>
+- 备用后台：<http://localhost:4321/yulong-yinyao/admin/>
 
 > 项目页必须带 `/yulong-yinyao/` 前缀。绑定自定义域名并重新 `pnpm setup` 后，地址才会变成根路径。
 
-后台第一次打开会要求登录。先按下一节生成 Token。
+编辑器第一次打开会要求登录。先按下一节生成 Token。
 
 ### 本地构建检查
 
@@ -135,7 +136,7 @@ pnpm preview
 
 ## 5. 生成 GitHub Token（PAT）
 
-这是给 Sveltia CMS 用的“仓库钥匙”。**只保存在你浏览器的 localStorage 里，不会写进仓库。**
+这是给 `/editor/`（以及可选的 Sveltia 后台）用的“仓库钥匙”。**只保存在你浏览器的 localStorage 里，不会写进仓库。**
 
 ### 推荐：Fine-grained token
 
@@ -162,16 +163,15 @@ pnpm preview
 
 Classic token 权限更大，能不用就不用。
 
-### 登录后台
+### 登录编辑器
 
-1. 打开 `/admin/`。
-2. 选择 **Sign in with Token**（中文界面可能是“使用令牌登录”）。
-3. 粘贴 Token。
-4. 如果弹出仓库选择，选 `你的用户名/yulong-yinyao`，分支 `main`。
+1. 打开 `/editor/`。
+2. 把 `github_pat_...` 粘贴到输入框，点“连接并开始编辑”。
+3. 登录成功后会看到“文章 / 插画 / 媒体库”三个标签和现有内容。
 
-登录成功后，左侧会出现“文章 / 插画”两个集合。
+如果要用可选的 Sveltia 后台：打开 `/admin/`，选 **Sign in with Token**（中文界面可能是“使用令牌登录”），粘贴同一个 Token，再选 `你的用户名/yulong-yinyao`、分支 `main`。
 
-> Token 只应输入到自己的站点后台。不要把 Token 截图、发群、写进 Issue。怀疑泄露就去 GitHub 设置里 Revoke，再生成新的。
+> Token 只应输入到自己的站点。不要把 Token 截图、发群、写进 Issue。怀疑泄露就去 GitHub 设置里 Revoke，再生成新的。
 
 ---
 

@@ -1,11 +1,12 @@
-# yulong_yinyao
+# 银曜的个人博客
 
-一个用来存档文章与插画的私人小站。Astro 静态生成，Sveltia CMS 在浏览器里写内容，GitHub Actions 自动部署与备份。
+一个用来存档文章与插画的私人小站。Astro 静态生成，自带一个轻量的 `/editor/` 编辑页，GitHub Actions 自动部署与备份。
 
-- 站点名：`yulong_yinyao`
+- 站点名：`银曜的个人博客`
 - 仓库名：`yulong-yinyao`
 - 线上地址：`https://yulongyinyao.github.io/yulong-yinyao/`
-- 后台：`https://yulongyinyao.github.io/yulong-yinyao/admin/`
+- 编辑器：`https://yulongyinyao.github.io/yulong-yinyao/editor/`
+- 备用后台：`https://yulongyinyao.github.io/yulong-yinyao/admin/`（Sveltia，可选）
 
 > 这是一个 **public 仓库 + GitHub Pages** 的方案。页面做了 `noindex` + `robots.txt`，搜索引擎不应收录；但仓库源码、草稿、图片和备份分支对所有知道地址的人可见。`noindex` 不是访问控制。若要让陌生人完全看不到，请读 [`docs/DEPLOY.md`](docs/DEPLOY.md) 的“隐私说明”一节。
 
@@ -34,7 +35,7 @@ pnpm setup
 pnpm dev
 ```
 
-打开 <http://localhost:4321/yulong-yinyao/>，后台是 <http://localhost:4321/yulong-yinyao/admin/>。
+打开 <http://localhost:4321/yulong-yinyao/>，编辑器是 <http://localhost:4321/yulong-yinyao/editor/>。
 
 > 本地 `pnpm dev` 没有 Pagefind 索引，搜索会显示“构建后可用”。要测试搜索，用 `pnpm build && pnpm preview`。
 
@@ -126,7 +127,7 @@ yulong-yinyao/
 │  ├─ data/categories.ts     # 固定分类
 │  ├─ layouts/BaseLayout.astro
 │  ├─ lib/content.ts         # 查询、统计、标签
-│  ├─ pages/                 # 首页/列表/详情/归档/关于/404
+│  ├─ pages/                 # 首页/列表/详情/归档/关于/404/editor
 │  ├─ styles/global.css      # Tailwind 4 + 主题
 │  └─ consts.ts              # 路径、日期、摘要等工具
 ├─ .github/workflows/
@@ -206,17 +207,19 @@ draft: false
 
 ---
 
-## 6. 后台怎么用
+## 6. 编辑器怎么用
 
-1. 打开 `/admin/`。
-2. 选择 **Sign in with Token**。
-3. 粘贴 GitHub Fine-grained PAT（权限：Contents Read and write；Metadata Read）。
-4. 选“文章”或“插画”，新建/编辑。
-5. 保存后 CMS 会 commit 到 `main`，GitHub Actions 自动重新构建。
+1. 打开 `/editor/`。
+2. 粘贴 GitHub Fine-grained PAT（权限：Contents Read and write；Metadata Read）。
+3. 左侧选文章/插画，或点“+ 文章”“+ 插画”新建。
+4. 标题、日期、分类、标签直接在表单里填；正文用 Markdown；封面和插画图可以上传、从媒体库选、删除。
+5. 点“保存并发布”，页面会直接 commit 到 `main`，GitHub Actions 自动重新构建。
 
 PAT 只存在当前浏览器 localStorage，不会提交到仓库。换浏览器/清除站点数据后要重新粘贴。
 
-> PC 端 Sveltia 自带媒体库：拖拽、批量上传、搜索、重命名、删除、复制 URL，**不需要额外插件或配置**。手机端调用系统文件选择器，可从相册选图或拍照；不同浏览器对“一次多选”的支持不同。
+编辑器不依赖 Sveltia：文章和图片都通过 GitHub Contents API 直接读写。`/admin/` 仍然保留，作为可选的 Sveltia 后台；日常使用 `/editor/` 即可。
+
+> 手机端上传调用系统文件选择器，可从相册选图或直接拍照；一次多选的支持取决于手机浏览器。PC 端可以一次批量选图，媒体库支持设为封面、加入插画、复制路径和删除。
 
 ---
 
@@ -260,7 +263,7 @@ https://<用户名>.github.io/yulong-yinyao/
 - 所有页面 `<head>` 含 `noindex, nofollow, noarchive, nosnippet, noimageindex`。
 - `public/robots.txt` 全站 `Disallow`。
 - 没有 sitemap、RSS、评论、统计脚本。
-- `/admin/` 同样 noindex。
+- `/editor/`、`/admin/` 同样 noindex。
 
 不能做：
 
@@ -274,16 +277,17 @@ https://<用户名>.github.io/yulong-yinyao/
 
 ## 10. 当前状态
 
-- [x] Astro 构建通过，生成 10 个页面。
+- [x] Astro 构建通过，生成 11 个页面（含 `/editor/`）。
 - [x] Pagefind 中文索引生成，只索引已发布详情页。
 - [x] 三栏布局、深色模式、分类/标签筛选、归档、搜索弹层、插画灯箱。
-- [x] Sveltia CMS 配置、媒体库、PAT 登录说明。
+- [x] `/editor/` 轻量编辑器：文章/插画新建、编辑、删除，图片上传、媒体库、Markdown 预览。
+- [x] Sveltia CMS 配置保留为可选后台，PAT 登录说明。
 - [x] robots.txt + 全局 noindex。
 - [x] 自动部署 + 自动备份 workflow。
 - [x] 部署/备份/验收文档。
-- [ ] 填入你的 GitHub 用户名（`pnpm setup`）。
-- [ ] 推送后做一次线上电脑/手机验收（`docs/ACCEPTANCE.md`）。
-- [ ] 删除示例文章/插画，换成自己的内容。
+- [x] 线上地址：`https://yulongyinyao.github.io/yulong-yinyao/`。
+- [ ] 用现代浏览器做一次线上电脑/手机验收（`docs/ACCEPTANCE.md`）。
+- [ ] 按需删除示例文章/插画，换成自己的内容。
 
 ---
 
@@ -291,10 +295,11 @@ https://<用户名>.github.io/yulong-yinyao/
 
 - [Astro](https://astro.build/) 7
 - [Tailwind CSS](https://tailwindcss.com/) 4
-- [Sveltia CMS](https://sveltiacms.app/)
+- [Sveltia CMS](https://sveltiacms.app/)（可选后台）
+- [YAML](https://eemeli.org/yaml/) + [marked](https://marked.js.org/)（`/editor/`）
 - [Pagefind](https://pagefind.app/)
 - GitHub Pages + GitHub Actions
 
 ---
 
-站点内容与插画归 `yulong_yinyao` 所有。未经允许，请勿转载。
+站点内容与插画归 `银曜` 所有。未经允许，请勿转载。
