@@ -91,6 +91,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
           <button type="button" class="editor-tab editor-tab-active" data-view="posts">文章</button>
           <button type="button" class="editor-tab" data-view="illustrations">插画</button>
           <button type="button" class="editor-tab" data-view="media">媒体库</button>
+          <button type="button" class="editor-tab" data-view="settings">站点</button>
         </div>
         <div class="flex flex-wrap items-center gap-2">
           <span id="editor-status" class="mr-1 text-xs text-slate-400"></span>
@@ -231,12 +232,67 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
               <select id="media-folder" class="field w-auto py-2 text-xs">
                 <option value="posts">文章配图</option>
                 <option value="illustrations">插画</option>
+                <option value="site">站点头像</option>
               </select>
               <button id="media-upload-button" type="button" class="btn-primary">上传图片</button>
               <input id="media-file" class="hidden" type="file" accept="image/*" multiple />
             </div>
           </div>
           <div id="media-grid" class="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"></div>
+        </div>
+      </section>
+
+      <section id="settings-view" class="hidden">
+        <div class="grid items-start gap-5 lg:grid-cols-2">
+          <div class="card p-5 sm:p-7">
+            <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">个人卡片</h2>
+            <p class="mt-1 text-sm leading-7 text-slate-500 dark:text-slate-400">
+              修改首页左侧卡片的头像和简介。头像会同时用于站点图标和分享封面。
+            </p>
+
+            <div class="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start">
+              <div class="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-dashed border-slate-200/90 bg-slate-50/60 dark:border-white/10 dark:bg-white/5">
+                <img id="settings-avatar-preview" class="hidden h-full w-full object-cover" alt="头像预览" />
+                <span id="settings-avatar-placeholder" class="px-3 text-center text-xs text-slate-400">还没有头像</span>
+              </div>
+              <div class="min-w-0 flex-1 space-y-2">
+                <input id="settings-avatar" class="field font-mono text-xs" type="text" placeholder="/uploads/site/avatar..." />
+                <div class="flex flex-wrap gap-2">
+                  <button id="avatar-upload-button" type="button" class="btn-ghost">上传头像</button>
+                  <input id="avatar-file" class="hidden" type="file" accept="image/*" />
+                </div>
+                <select id="settings-avatar-media" class="field py-2 text-xs">
+                  <option value="">从媒体库选择…</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="mt-5 block">
+              <span class="field-label">简介</span>
+              <textarea id="settings-bio" class="field min-h-[7rem] resize-y leading-7" placeholder="写字，画画。"></textarea>
+            </label>
+          </div>
+
+          <div class="card p-5 sm:p-7">
+            <div class="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 class="font-display text-2xl font-semibold text-ink dark:text-white">分类</h2>
+                <p class="mt-1 text-sm leading-7 text-slate-500 dark:text-slate-400">
+                  名称显示在站点上，slug 用于 URL；已有内容的分类不能直接删除或改 slug。
+                </p>
+              </div>
+            </div>
+            <div id="settings-categories" class="mt-5 space-y-6"></div>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button id="add-post-category" type="button" class="btn-ghost">+ 文章分类</button>
+              <button id="add-illustration-category" type="button" class="btn-ghost">+ 插画分类</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex flex-wrap items-center gap-3">
+          <button id="save-settings" type="button" class="btn-primary">保存设置</button>
+          <span id="settings-status" class="text-xs text-slate-400"></span>
         </div>
       </section>
     </section>
@@ -253,12 +309,19 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
 <script>
   import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
   import { marked } from 'marked';
-  import { ILLUSTRATION_CATEGORIES, POST_CATEGORIES } from '../data/categories';
+  import {
+    ILLUSTRATION_CATEGORIES,
+    POST_CATEGORIES,
+    type Category,
+  } from '../data/categories';
 
   type ItemType = 'posts' | 'illustrations';
-  type ViewType = ItemType | 'media';
+  type ViewType = ItemType | 'media' | 'settings';
+  type UploadFolder = 'posts' | 'illustrations' | 'site';
   type Item = { type: ItemType; path: string; sha: string; data: Record<string, any>; body: string };
   type MediaFile = { path: string; sha: string };
+  type EditableCategory = Category & { originalSlug: string };
+  type CategoryGroups = Record<ItemType, EditableCategory[]>;
 
   const root = document.getElementById('editor-root') as HTMLElement;
   const REPO = root.dataset.repo ?? '';
@@ -276,6 +339,14 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
   let media: MediaFile[] = [];
   let cover = '';
   let images: string[] = [];
+
+  let postCategories: Category[] = POST_CATEGORIES.map((item) => ({ ...item }));
+  let illustrationCategories: Category[] = ILLUSTRATION_CATEGORIES.map((item) => ({ ...item }));
+  let profile: Record<string, any> = {};
+  let profileSha = '';
+  let categoriesSha = '';
+  let avatar = '/avatar.svg';
+  let settingsInitialized = false;
 
   function esc(value: unknown): string {
     return String(value ?? '').replace(/[&<>"']/g, (char) => {
@@ -477,9 +548,89 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     return { type, path, sha: file.sha, data: parsed.data, body: parsed.body };
   }
 
+  async function readJsonFile(path: string): Promise<{ data: any; sha: string } | null> {
+    try {
+      const file = await gh(`/repos/${REPO}/contents/${encodePath(path)}?ref=main`);
+      return { data: JSON.parse(fromBase64(file.content)), sha: file.sha };
+    } catch {
+      return null;
+    }
+  }
+
+  function normalizeCategories(value: any): Category[] {
+    if (!Array.isArray(value)) return [];
+    return value
+      .map((item) => ({
+        slug: String(item?.slug ?? '').trim(),
+        label: String(item?.label ?? '').trim(),
+        description: String(item?.description ?? '').trim(),
+      }))
+      .filter((item) => item.slug && item.label);
+  }
+
+  async function commitFiles(
+    files: { path: string; content: string }[],
+    message: string,
+  ): Promise<Record<string, string>> {
+    const ref = await gh(`/repos/${REPO}/git/ref/heads/main`);
+    const headSha = ref.object.sha;
+    const head = await gh(`/repos/${REPO}/git/commits/${headSha}`);
+    const blobs: Record<string, string> = {};
+
+    for (const file of files) {
+      const blob = await gh(`/repos/${REPO}/git/blobs`, {
+        method: 'POST',
+        body: JSON.stringify({ content: toBase64(file.content), encoding: 'base64' }),
+      });
+      blobs[file.path] = blob.sha;
+    }
+
+    const tree = await gh(`/repos/${REPO}/git/trees`, {
+      method: 'POST',
+      body: JSON.stringify({
+        base_tree: head.tree.sha,
+        tree: files.map((file) => ({
+          path: file.path,
+          mode: '100644',
+          type: 'blob',
+          sha: blobs[file.path],
+        })),
+      }),
+    });
+    const commit = await gh(`/repos/${REPO}/git/commits`, {
+      method: 'POST',
+      body: JSON.stringify({ message, tree: tree.sha, parents: [headSha] }),
+    });
+    await gh(`/repos/${REPO}/git/refs/heads/main`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sha: commit.sha }),
+    });
+    return blobs;
+  }
+
   async function loadData(selectPath?: string): Promise<void> {
     setStatus('读取仓库…');
     const tree = await gh(`/repos/${REPO}/git/trees/main?recursive=1`);
+    const [profileFile, categoriesFile] = await Promise.all([
+      readJsonFile('config/site.json'),
+      readJsonFile('config/categories.json'),
+    ]);
+
+    if (profileFile) {
+      profile =
+        profileFile.data && typeof profileFile.data === 'object' && !Array.isArray(profileFile.data)
+          ? profileFile.data
+          : {};
+      profileSha = profileFile.sha;
+      avatar = String(profile.avatar || avatar);
+    }
+    if (categoriesFile) {
+      const posts = normalizeCategories(categoriesFile.data?.posts);
+      const illustrations = normalizeCategories(categoriesFile.data?.illustrations);
+      if (posts.length) postCategories = posts;
+      if (illustrations.length) illustrationCategories = illustrations;
+      categoriesSha = categoriesFile.sha;
+    }
     const blobs = (tree.tree ?? []).filter((node: any) => node.type === 'blob') as any[];
 
     media = blobs
@@ -504,6 +655,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
 
     renderList();
     renderMedia();
+    settingsInitialized = false;
 
     const targetPath = selectPath || current?.path;
     if (targetPath) {
@@ -515,6 +667,10 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     }
 
     setStatus(`${items.posts.length} 篇文章 · ${items.illustrations.length} 幅插画 · ${media.length} 张图片`);
+    if (currentView === 'settings') {
+      renderSettings();
+      settingsInitialized = true;
+    }
   }
 
   function syncTabs(): void {
@@ -522,11 +678,20 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       button.classList.toggle('editor-tab-active', button.dataset.view === currentView);
     });
     const isMedia = currentView === 'media';
-    $('content-workspace').classList.toggle('hidden', isMedia);
+    const isSettings = currentView === 'settings';
+    $('content-workspace').classList.toggle('hidden', isMedia || isSettings);
     $('media-view').classList.toggle('hidden', !isMedia);
-    $('new-post').classList.toggle('hidden', isMedia);
-    $('new-illustration').classList.toggle('hidden', isMedia);
+    $('settings-view').classList.toggle('hidden', !isSettings);
+    $('new-post').classList.toggle('hidden', isMedia || isSettings);
+    $('new-illustration').classList.toggle('hidden', isMedia || isSettings);
 
+    if (isSettings) {
+      if (!settingsInitialized) {
+        renderSettings();
+        settingsInitialized = true;
+      }
+      return;
+    }
     if (!isMedia) {
       $('list-title').textContent = currentView === 'posts' ? '文章' : '插画';
       $('list-count').textContent = `${items[currentView].length}`;
@@ -535,7 +700,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
   }
 
   function renderList(): void {
-    if (currentView === 'media') return;
+    if (currentView === 'media' || currentView === 'settings') return;
     const list = items[currentView];
     const container = $('item-list');
     if (!list.length) {
@@ -579,6 +744,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
             <p class="truncate font-mono text-[0.65rem] text-slate-400" title="${esc(name)}">${esc(name)}</p>
             <div class="flex flex-wrap gap-1">
               <button type="button" data-media-action="cover" data-path="${esc(file.path)}" class="rounded-full bg-rose-50 px-2 py-1 text-[0.65rem] text-rose-600 hover:bg-rose-100 dark:bg-rose-400/10 dark:text-rose-200">封面</button>
+              <button type="button" data-media-action="avatar" data-path="${esc(file.path)}" class="rounded-full bg-amber-50 px-2 py-1 text-[0.65rem] text-amber-600 hover:bg-amber-100 dark:bg-amber-400/10 dark:text-amber-200">头像</button>
               <button type="button" data-media-action="insert" data-path="${esc(file.path)}" class="rounded-full bg-violet-50 px-2 py-1 text-[0.65rem] text-violet-600 hover:bg-violet-100 dark:bg-violet-400/10 dark:text-violet-200">插画</button>
               <button type="button" data-media-action="copy" data-path="${esc(file.path)}" class="rounded-full bg-slate-100 px-2 py-1 text-[0.65rem] text-slate-500 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-300">路径</button>
               <button type="button" data-media-action="delete" data-path="${esc(file.path)}" class="rounded-full bg-red-50 px-2 py-1 text-[0.65rem] text-red-500 hover:bg-red-100 dark:bg-red-400/10 dark:text-red-300">删除</button>
@@ -589,11 +755,190 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       .join('');
   }
 
+  function renderAvatarPreview(): void {
+    const preview = $<HTMLImageElement>('settings-avatar-preview');
+    const placeholder = $('settings-avatar-placeholder');
+    if (avatar) {
+      preview.src = imageSrc(avatar);
+      preview.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+    } else {
+      preview.removeAttribute('src');
+      preview.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+    }
+  }
+
+  function renderCategoryGroup(type: ItemType): string {
+    const list = categoriesFor(type);
+    const title = type === 'posts' ? '文章分类' : '插画分类';
+    return `<section>
+      <div class="flex items-center justify-between gap-3">
+        <h3 class="text-sm font-semibold text-ink dark:text-slate-100">${title}</h3>
+        <span class="text-[0.7rem] text-slate-400">${list.length} 个</span>
+      </div>
+      <div class="mt-2 space-y-2" data-category-list="${type}">
+        ${list
+          .map(
+            (item) => `<div class="rounded-xl border border-slate-200/70 bg-white/60 p-3 dark:border-white/10 dark:bg-white/5" data-category-row data-category-type="${type}" data-original-slug="${esc(item.slug)}">
+              <div class="grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label class="block"><span class="field-label">名称</span><input class="field py-2 text-xs" data-cat-field="label" value="${esc(item.label)}" placeholder="例如：随笔" /></label>
+                <label class="block"><span class="field-label">slug</span><input class="field py-2 font-mono text-xs" data-cat-field="slug" value="${esc(item.slug)}" placeholder="essay" /></label>
+                <button type="button" class="btn-ghost self-end px-3 py-2 text-xs text-red-500" data-remove-category>移除</button>
+              </div>
+              <label class="mt-2 block"><span class="field-label">描述（可选，显示在关于页）</span><input class="field py-2 text-xs" data-cat-field="description" value="${esc(item.description)}" placeholder="一句话说明这个分类" /></label>
+            </div>`,
+          )
+          .join('')}
+      </div>
+    </section>`;
+  }
+
+  function renderCategoryRows(): void {
+    $('settings-categories').innerHTML = `${renderCategoryGroup('posts')}${renderCategoryGroup('illustrations')}`;
+  }
+
+  function renderAvatarMediaOptions(): void {
+    const select = $<HTMLSelectElement>('settings-avatar-media');
+    select.innerHTML = `<option value="">从媒体库选择…</option>${media
+      .map((file) => {
+        const value = publicPath(file.path);
+        const name = file.path.split('/').pop() ?? file.path;
+        return `<option value="${esc(value)}">${esc(name)}</option>`;
+      })
+      .join('')}`;
+    select.value = media.some((file) => publicPath(file.path) === avatar) ? avatar : '';
+  }
+
+  function renderSettings(): void {
+    $<HTMLInputElement>('settings-avatar').value = avatar;
+    renderAvatarPreview();
+    $<HTMLTextAreaElement>('settings-bio').value = String(profile.bio ?? '');
+    renderAvatarMediaOptions();
+    renderCategoryRows();
+  }
+
+  function addCategory(type: ItemType): void {
+    categoriesFor(type).push({ slug: '', label: '', description: '' });
+    renderCategoryRows();
+    const rows = document.querySelectorAll<HTMLElement>(`[data-category-type="${type}"]`);
+    rows.item(rows.length - 1)?.querySelector<HTMLInputElement>('[data-cat-field="label"]')?.focus();
+  }
+
+  function collectCategories(): CategoryGroups {
+    const groups: CategoryGroups = { posts: [], illustrations: [] };
+    document.querySelectorAll<HTMLElement>('[data-category-row]').forEach((row) => {
+      const type = (row.dataset.categoryType as ItemType) || 'posts';
+      const get = (field: string) =>
+        row.querySelector<HTMLInputElement>(`[data-cat-field="${field}"]`)?.value.trim() ?? '';
+      groups[type].push({
+        slug: get('slug').toLowerCase(),
+        label: get('label'),
+        description: get('description'),
+        originalSlug: row.dataset.originalSlug ?? '',
+      });
+    });
+    return groups;
+  }
+
+  function usedCategoryCount(type: ItemType, slug: string): number {
+    return items[type].filter((item) => item.data.category === slug).length;
+  }
+
+  function validateCategories(groups: CategoryGroups): string {
+    for (const type of ['posts', 'illustrations'] as ItemType[]) {
+      const list = groups[type];
+      if (!list.length) return `${type === 'posts' ? '文章' : '插画'}至少需要保留一个分类。`;
+
+      const slugs = new Set<string>();
+      for (const item of list) {
+        if (!item.label || !item.slug) return '分类名称和 slug 都不能为空。';
+        if (!/^[a-z0-9-]+$/.test(item.slug)) {
+          return `分类 slug「${item.slug}」只能包含小写字母、数字和连字符。`;
+        }
+        if (slugs.has(item.slug)) return `分类 slug「${item.slug}」重复了。`;
+        slugs.add(item.slug);
+      }
+
+      for (const previous of categoriesFor(type)) {
+        const row = list.find((item) => item.originalSlug === previous.slug);
+        const removedOrRenamed = !row || row.slug !== previous.slug;
+        if (removedOrRenamed) {
+          const count = usedCategoryCount(type, previous.slug);
+          if (count > 0) {
+            return `分类「${previous.label}」下还有 ${count} 篇内容，不能删除或改 slug。`;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  function cleanGroups(groups: CategoryGroups): Record<ItemType, Category[]> {
+    const clean = (list: EditableCategory[]): Category[] =>
+      list.map(({ slug, label, description }) => ({ slug, label, description }));
+    return { posts: clean(groups.posts), illustrations: clean(groups.illustrations) };
+  }
+
+  async function saveSettings(): Promise<void> {
+    const groups = collectCategories();
+    const error = validateCategories(groups);
+    if (error) {
+      toast(error, 'error');
+      $('settings-status').textContent = error;
+      return;
+    }
+
+    const cleaned = cleanGroups(groups);
+    const nextProfile = {
+      ...(profile || {}),
+      avatar: avatar.trim(),
+      bio: $<HTMLTextAreaElement>('settings-bio').value.trim(),
+    };
+    const files = [
+      {
+        path: 'config/site.json',
+        content: `${JSON.stringify(nextProfile, null, 2)}\n`,
+      },
+      {
+        path: 'config/categories.json',
+        content: `${JSON.stringify(cleaned, null, 2)}\n`,
+      },
+    ];
+
+    try {
+      $<HTMLButtonElement>('save-settings').disabled = true;
+      $('settings-status').textContent = '正在提交…';
+      const shas = await commitFiles(files, 'settings: update profile and categories');
+      profile = nextProfile;
+      postCategories = cleaned.posts;
+      illustrationCategories = cleaned.illustrations;
+      profileSha = shas['config/site.json'] || profileSha;
+      categoriesSha = shas['config/categories.json'] || categoriesSha;
+      renderSettings();
+      $('settings-status').textContent = '已提交，构建中';
+      toast('设置已提交，GitHub Actions 约 40–60 秒后发布；页面会自动刷新。');
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : String(cause);
+      $('settings-status').textContent = message;
+      toast(message, 'error');
+    } finally {
+      $<HTMLButtonElement>('save-settings').disabled = false;
+    }
+  }
+
+  function categoriesFor(type: ItemType): Category[] {
+    return type === 'posts' ? postCategories : illustrationCategories;
+  }
+
   function fillCategoryOptions(type: ItemType, selected?: string): void {
-    const list = type === 'posts' ? POST_CATEGORIES : ILLUSTRATION_CATEGORIES;
+    const list = categoriesFor(type);
     const select = $<HTMLSelectElement>('field-category');
-    select.innerHTML = list.map((item) => `<option value="${item.slug}">${esc(item.label)}</option>`).join('');
-    select.value = list.some((item) => item.slug === selected) ? (selected as string) : list[0].slug;
+    select.innerHTML = list
+      .map((item) => `<option value="${esc(item.slug)}">${esc(item.label)}</option>`)
+      .join('');
+    const fallback = list[0]?.slug ?? '';
+    select.value = list.some((item) => item.slug === selected) ? (selected as string) : fallback;
   }
 
   function renderCover(): void {
@@ -671,7 +1016,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
   }
 
   function newItem(type: ItemType): void {
-    const category = type === 'posts' ? POST_CATEGORIES[0].slug : ILLUSTRATION_CATEGORIES[0].slug;
+    const category = categoriesFor(type)[0]?.slug ?? 'uncategorized';
     current = { type, path: '', sha: '', data: { title: '', date: today(), category, tags: [], draft: false }, body: '' };
     cover = '';
     images = [];
@@ -816,7 +1161,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     }
   }
 
-  async function uploadFiles(files: FileList | File[], folder: 'posts' | 'illustrations', target: 'cover' | 'images' | 'media'): Promise<void> {
+  async function uploadFiles(files: FileList | File[], folder: UploadFolder, target: 'cover' | 'images' | 'media' | 'avatar'): Promise<void> {
     const list = Array.from(files);
     if (!list.length) return;
 
@@ -865,6 +1210,11 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         } else if (target === 'images') {
           images.push(value);
           renderImages();
+        } else if (target === 'avatar') {
+          avatar = value;
+          $<HTMLInputElement>('settings-avatar').value = value;
+          renderAvatarPreview();
+          renderAvatarMediaOptions();
         }
         renderMedia();
         toast(
@@ -901,8 +1251,14 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         renderCover();
       }
       images = images.filter((entry) => entry !== value);
+      if (avatar === value) {
+        avatar = '/avatar.svg';
+        $<HTMLInputElement>('settings-avatar').value = avatar;
+        renderAvatarPreview();
+      }
       renderImages();
       renderMedia();
+      renderAvatarMediaOptions();
       toast('图片已删除。');
     } catch (error) {
       toast(error instanceof Error ? error.message : String(error), 'error');
@@ -1080,7 +1436,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     $('media-file').addEventListener('change', async (event) => {
       const input = event.target as HTMLInputElement;
       if (input.files) {
-        const folder = $<HTMLSelectElement>('media-folder').value as 'posts' | 'illustrations';
+        const folder = $<HTMLSelectElement>('media-folder').value as UploadFolder;
         await uploadFiles(input.files, folder, 'media');
       }
       input.value = '';
@@ -1106,6 +1462,12 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         currentView = 'posts';
         syncTabs();
         toast('已设为封面，记得点“保存修改”。');
+      } else if (action === 'avatar') {
+        avatar = publicPath(path);
+        currentView = 'settings';
+        syncTabs();
+        renderAvatarPreview();
+        toast('已设为头像，记得点“保存设置”。');
       } else if (action === 'insert') {
         if (!current || current.type !== 'illustrations') {
           toast('先选中一幅插画，再加入图片。', 'error');
@@ -1118,6 +1480,39 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         syncTabs();
         toast('已加入插画，记得点“保存修改”。');
       }
+    });
+
+    $('settings-avatar').addEventListener('input', (event) => {
+      avatar = (event.target as HTMLInputElement).value.trim();
+      renderAvatarPreview();
+    });
+    $('settings-avatar-media').addEventListener('change', (event) => {
+      const value = (event.target as HTMLSelectElement).value;
+      if (!value) return;
+      avatar = value;
+      $<HTMLInputElement>('settings-avatar').value = value;
+      renderAvatarPreview();
+    });
+    $('settings-bio').addEventListener('input', (event) => {
+      profile.bio = (event.target as HTMLTextAreaElement).value;
+    });
+    $('avatar-upload-button').addEventListener('click', () => $<HTMLInputElement>('avatar-file').click());
+    $('avatar-file').addEventListener('change', async (event) => {
+      const input = event.target as HTMLInputElement;
+      if (input.files) await uploadFiles(input.files, 'site', 'avatar');
+      input.value = '';
+    });
+
+    $('settings-categories').addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLElement>('[data-remove-category]');
+      if (!button) return;
+      const row = button.closest<HTMLElement>('[data-category-row]');
+      row?.remove();
+    });
+    $('add-post-category').addEventListener('click', () => addCategory('posts'));
+    $('add-illustration-category').addEventListener('click', () => addCategory('illustrations'));
+    $('save-settings').addEventListener('click', () => {
+      saveSettings().catch((error) => toast(error instanceof Error ? error.message : String(error), 'error'));
     });
   }
 

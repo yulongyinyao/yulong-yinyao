@@ -5,12 +5,7 @@ import {
   postHref,
   withBase,
 } from '../consts';
-import {
-  ILLUSTRATION_CATEGORIES,
-  POST_CATEGORIES,
-  type IllustrationCategory,
-  type PostCategory,
-} from '../data/categories';
+import { ILLUSTRATION_CATEGORIES, POST_CATEGORIES } from '../data/categories';
 
 export type PostEntry = CollectionEntry<'posts'>;
 export type IllustrationEntry = CollectionEntry<'illustrations'>;
@@ -48,7 +43,7 @@ function countPostsByCategory(posts: PostEntry[]): CategoryCount[] {
   return POST_CATEGORIES.map((category) => ({
     slug: category.slug,
     label: category.label,
-    count: posts.filter((post) => post.data.category === (category.slug as PostCategory)).length,
+    count: posts.filter((post) => post.data.category === category.slug).length,
   }));
 }
 
@@ -57,7 +52,7 @@ function countIllustrationsByCategory(illustrations: IllustrationEntry[]): Categ
     slug: category.slug,
     label: category.label,
     count: illustrations.filter(
-      (illustration) => illustration.data.category === (category.slug as IllustrationCategory),
+      (illustration) => illustration.data.category === category.slug,
     ).length,
   }));
 }

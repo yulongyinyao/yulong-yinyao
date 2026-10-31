@@ -1,9 +1,5 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
-import {
-  ILLUSTRATION_CATEGORY_SLUGS,
-  POST_CATEGORY_SLUGS,
-} from './data/categories';
 
 /** Accept both YAML date objects and plain YYYY-MM-DD strings. */
 const dateValue = z
@@ -26,7 +22,7 @@ const posts = defineCollection({
   schema: z.object({
     title: z.string(),
     date: dateValue,
-    category: z.enum(POST_CATEGORY_SLUGS),
+    category: z.string().min(1),
     tags: z.array(z.string()).default([]),
     cover: z.string().optional(),
     draft: z.boolean().default(false),
@@ -38,7 +34,7 @@ const illustrations = defineCollection({
   schema: z.object({
     title: z.string(),
     date: dateValue,
-    category: z.enum(ILLUSTRATION_CATEGORY_SLUGS),
+    category: z.string().min(1),
     tags: z.array(z.string()).default([]),
     images: z.array(z.string()).min(1),
     description: z.string().default(''),

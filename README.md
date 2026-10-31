@@ -101,7 +101,8 @@ $env:NODE_OPTIONS="--max-old-space-size=6144"; pnpm check
 ```text
 yulong-yinyao/
 ├─ config/
-│  └─ site.json              # 站点名、简介、GitHub 用户名、域名
+│  ├─ site.json              # 站点名、头像、简介、GitHub 用户名、域名
+│  └─ categories.json        # 文章/插画分类（可在编辑器“站点”里改）
 ├─ public/
 │  ├─ admin/
 │  │  ├─ index.html          # /admin 入口
@@ -109,7 +110,8 @@ yulong-yinyao/
 │  │  └─ sveltia-cms.js      # 构建时从 node_modules 复制，已 gitignore
 │  ├─ uploads/
 │  │  ├─ posts/              # 文章封面与正文图
-│  │  └─ illustrations/      # 插画图片
+│  │  ├─ illustrations/      # 插画图片
+│  │  └─ site/               # 站点头像
 │  ├─ robots.txt             # 全站禁止爬虫
 │  ├─ hero.svg               # 首页 Banner
 │  ├─ avatar.svg             # 头像
@@ -124,7 +126,7 @@ yulong-yinyao/
 │  │  ├─ posts/              # 文章 Markdown
 │  │  └─ illustrations/      # 插画 Markdown
 │  ├─ content.config.ts      # 内容模型与校验
-│  ├─ data/categories.ts     # 固定分类
+│  ├─ data/categories.ts     # 读取 config/categories.json
 │  ├─ layouts/BaseLayout.astro
 │  ├─ lib/content.ts         # 查询、统计、标签
 │  ├─ pages/                 # 首页/列表/详情/归档/关于/404/editor
@@ -152,7 +154,7 @@ yulong-yinyao/
 ---
 title: 标题
 date: 2026-10-31
-category: life        # essay | tech | life | creation
+category: life        # 默认值，可在编辑器“站点”里增删改
 tags:
   - 标签一
   - 标签二
@@ -169,7 +171,7 @@ draft: false
 ---
 title: 标题
 date: 2026-10-31
-category: original    # original | practice | fanart | commission
+category: original    # 默认值，可在编辑器“站点”里增删改
 tags:
   - 标签
 images:
@@ -183,7 +185,7 @@ draft: false
 
 ### 分类
 
-分类是固定列表，定义在 `src/data/categories.ts`：
+分类数据在 `config/categories.json`，初始为：
 
 | 类型 | slug | 中文 |
 | --- | --- | --- |
@@ -196,7 +198,7 @@ draft: false
 | 插画 | `fanart` | 同人 |
 | 插画 | `commission` | 约稿 |
 
-标签自由输入，自动汇总。
+日常在编辑器顶部“站点”里增删改：名称显示在站点上，slug 用于 URL。已经有内容的分类不能删除或改 slug，避免文章“失去分类”。标签仍然自由输入，自动汇总。
 
 ### 图片路径规则
 
@@ -214,6 +216,7 @@ draft: false
 3. 左侧选文章/插画，或点“+ 文章”“+ 插画”新建。
 4. 标题、日期、分类、标签直接在表单里填；正文用 Markdown；封面和插画图可以上传、从媒体库选、删除。
 5. 点“保存并发布”，页面会直接 commit 到 `main`，GitHub Actions 自动重新构建。
+6. 顶部“站点”里可以改左侧卡片的头像、简介，以及文章/插画分类；保存会同时提交 `config/site.json` 和 `config/categories.json`，只触发一次构建。
 
 PAT 只存在当前浏览器 localStorage，不会提交到仓库。换浏览器/清除站点数据后要重新粘贴。
 
