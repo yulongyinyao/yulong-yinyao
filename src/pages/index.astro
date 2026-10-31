@@ -30,7 +30,7 @@ const groups = [
 ];
 ---
 
-<BaseLayout description="文字与画的私人存档：文章、插画、分类与标签。">
+<BaseLayout description="银曜的个人博客：文章与插画。">
   <Hero />
 
   <ThreeColumnLayout
@@ -46,8 +46,7 @@ const groups = [
     <section aria-labelledby="latest-posts">
       <div class="mb-3 flex items-end justify-between gap-3 px-1">
         <div>
-          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-rose-400">Writing</p>
-          <h2 id="latest-posts" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+          <h2 id="latest-posts" class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
             最近写的
           </h2>
         </div>
@@ -78,8 +77,7 @@ const groups = [
     <section aria-labelledby="latest-illustrations">
       <div class="mb-3 flex items-end justify-between gap-3 px-1">
         <div>
-          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-violet-400">Drawing</p>
-          <h2 id="latest-illustrations" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+          <h2 id="latest-illustrations" class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
             最近画的
           </h2>
         </div>
@@ -107,20 +105,6 @@ const groups = [
           </div>
         )
       }
-    </section>
-
-    <section class="card relative overflow-hidden p-6" aria-label="站点说明">
-      <div class="absolute -right-10 -top-10 h-36 w-36 rounded-full bg-rose-200/40 blur-2xl dark:bg-rose-400/10"></div>
-      <div class="relative">
-        <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-slate-400">A note</p>
-        <p class="mt-2 max-w-xl font-display text-lg leading-8 text-ink dark:text-slate-100">
-          这里是一个不追赶更新的私人存档。文字和画都按时间收好，分类是抽屉，标签是书签。
-        </p>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <a href={withBase('/archive/')} class="chip">按时间归档</a>
-          <a href={withBase('/about/')} class="chip-muted">关于这个站点</a>
-        </div>
-      </div>
     </section>
   </ThreeColumnLayout>
 </BaseLayout>

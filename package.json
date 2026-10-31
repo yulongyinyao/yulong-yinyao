@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "yulong_yinyao 的私人文章与插画存档",
+  "description": "银曜的个人博客：文章与插画存档",
   "packageManager": "pnpm@11.28.5",
   "engines": {
     "node": ">=22"

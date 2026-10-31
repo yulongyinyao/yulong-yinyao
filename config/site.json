@@ -1,8 +1,9 @@
 {
-  "name": "yulong_yinyao",
-  "title": "yulong_yinyao",
-  "description": "文字与画的私人存档",
-  "bio": "在这里存放写过的字和画过的画。",
+  "name": "银曜的个人博客",
+  "displayName": "银曜",
+  "title": "银曜的个人博客",
+  "description": "文章与插画",
+  "bio": "写字，画画。",
   "githubUsername": "yulongyinyao",
   "repoName": "yulong-yinyao",
   "customDomain": "",

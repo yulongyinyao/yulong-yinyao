@@ -3,15 +3,9 @@ import { site, withBase } from '../consts';
 
 interface Props {
   title?: string;
-  subtitle?: string;
-  eyebrow?: string;
 }
 
-const {
-  title = site.name,
-  subtitle = site.description,
-  eyebrow = '私人存档 · 文章与插画',
-} = Astro.props;
+const { title = site.name } = Astro.props;
 ---
 
 <section class="relative isolate overflow-hidden border-b border-white/40 dark:border-white/10">
@@ -25,19 +19,10 @@ const {
   <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#1b1730]/55 via-[#2a2140]/45 to-cream/95 dark:to-[#0f0d18]"></div>
   <div class="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-cream to-transparent dark:from-[#0f0d18]"></div>
 
-  <div class="mx-auto flex min-h-[24rem] max-w-[88rem] flex-col items-center justify-center px-4 py-20 text-center sm:min-h-[28rem] sm:px-6 lg:min-h-[30rem] lg:px-8">
-    <p class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/15 px-3.5 py-1.5 text-[0.68rem] font-medium uppercase tracking-[0.22em] text-white/90 backdrop-blur-md">
-      <span class="h-1.5 w-1.5 rounded-full bg-amber-300"></span>
-      {eyebrow}
-    </p>
-
+  <div class="mx-auto flex min-h-[22rem] max-w-[88rem] flex-col items-center justify-center px-4 py-16 text-center sm:min-h-[26rem] sm:px-6 lg:min-h-[28rem] lg:px-8">
     <h1 class="font-display text-4xl font-semibold tracking-tight text-white drop-shadow-[0_3px_18px_rgba(25,15,45,0.45)] sm:text-6xl lg:text-7xl">
       {title}
     </h1>
-
-    <p class="mt-4 max-w-2xl text-balance text-sm leading-7 text-white/85 sm:text-base">
-      {subtitle}
-    </p>
 
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
       <a
@@ -60,9 +45,5 @@ const {
         </svg>
       </a>
     </div>
-
-    <p class="mt-6 text-[0.68rem] tracking-wide text-white/55">
-      本站为私人站点，已禁止搜索引擎抓取与收录
-    </p>
   </div>
 </section>
