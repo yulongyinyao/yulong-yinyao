@@ -1,0 +1,43 @@
+---
+import type { NoteEntry } from '../lib/content';
+import { formatDate } from '../consts';
+
+interface Props {
+  note: NoteEntry;
+}
+
+const { note } = Astro.props;
+const [year, month, day] = formatDate(note.data.date).split('.');
+---
+
+<article
+  id={`note-${note.id}`}
+  class="card relative overflow-hidden p-5 sm:p-6"
+>
+  <div class="flex flex-col gap-4 sm:flex-row sm:gap-6">
+    <div class="flex shrink-0 items-baseline gap-2 sm:w-28 sm:flex-col sm:items-start sm:gap-1" data-pagefind-ignore>
+      <time datetime={note.data.date} class="font-display text-3xl font-semibold leading-none text-rose-600 dark:text-rose-300">
+        {day}
+      </time>
+      <span class="text-[0.68rem] tracking-wide text-slate-400 dark:text-slate-500">{year}.{month}</span>
+    </div>
+
+    <div class="min-w-0 flex-1">
+      {note.data.title && (
+        <h2 class="font-display text-xl font-semibold tracking-tight text-ink dark:text-white">
+          {note.data.title}
+        </h2>
+      )}
+      <div class:list={['prose prose-sm prose-custom max-w-none text-slate-600 dark:text-slate-300', note.data.title && 'mt-2']}>
+        <slot />
+      </div>
+      {note.data.tags.length > 0 && (
+        <div class="mt-4 flex flex-wrap gap-1.5" data-pagefind-ignore>
+          {note.data.tags.map((tag) => (
+            <span class="chip-muted">#{tag}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+</article>

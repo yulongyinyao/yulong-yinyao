@@ -7,17 +7,29 @@ interface GalleryImage {
 interface Props {
   images: GalleryImage[];
   title: string;
+  layout?: 'grid' | 'masonry';
 }
 
-const { images, title } = Astro.props;
+const { images, title, layout = 'grid' } = Astro.props;
+const masonry = layout === 'masonry';
 ---
 
-<div id="illustration-gallery" class="grid gap-3 sm:grid-cols-2" data-pagefind-ignore>
+<div
+  id="illustration-gallery"
+  class:list={[
+    'gap-3',
+    masonry ? 'columns-2 [column-gap:0.75rem] md:columns-3 xl:columns-4' : 'grid sm:grid-cols-2',
+  ]}
+  data-pagefind-ignore
+>
   {
     images.map((image, index) => (
       <button
         type="button"
-        class="group relative block overflow-hidden rounded-2xl border border-white/60 bg-white/40 text-left shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:border-white/10 dark:bg-white/5"
+        class:list={[
+          'group relative block overflow-hidden rounded-2xl border border-white/60 bg-white/40 text-left shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-400 dark:border-white/10 dark:bg-white/5',
+          masonry && 'mb-3 break-inside-avoid',
+        ]}
         data-lightbox-trigger
         data-index={index}
         data-src={image.src}
@@ -27,7 +39,10 @@ const { images, title } = Astro.props;
         <img
           src={image.src}
           alt={image.alt}
-          class="aspect-[4/5] w-full object-cover transition duration-700 group-hover:scale-[1.03]"
+          class:list={[
+            'w-full object-cover transition duration-700 group-hover:scale-[1.03]',
+            !masonry && 'aspect-[4/5]',
+          ]}
           loading={index === 0 ? 'eager' : 'lazy'}
           decoding="async"
         />

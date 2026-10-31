@@ -36,6 +36,10 @@ export function illustrationHref(id: string): string {
   return withBase(`/illustrations/${encodeURIComponent(id)}/`);
 }
 
+export function projectHref(id: string): string {
+  return withBase(`/projects/${encodeURIComponent(id)}/`);
+}
+
 export function categoryHref(type: 'post' | 'illustration', slug: string): string {
   const section = type === 'post' ? 'posts' : 'illustrations';
   return withBase(`/${section}/?category=${encodeURIComponent(slug)}`);

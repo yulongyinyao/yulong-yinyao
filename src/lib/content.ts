@@ -9,6 +9,8 @@ import { ILLUSTRATION_CATEGORIES, POST_CATEGORIES } from '../data/categories';
 
 export type PostEntry = CollectionEntry<'posts'>;
 export type IllustrationEntry = CollectionEntry<'illustrations'>;
+export type NoteEntry = CollectionEntry<'notes'>;
+export type ProjectEntry = CollectionEntry<'projects'>;
 
 export interface CategoryCount {
   slug: string;
@@ -37,6 +39,16 @@ export async function getPublishedPosts(): Promise<PostEntry[]> {
 export async function getPublishedIllustrations(): Promise<IllustrationEntry[]> {
   const illustrations = await getCollection('illustrations', ({ data }) => !data.draft);
   return illustrations.sort((a, b) => b.data.date.localeCompare(a.data.date));
+}
+
+export async function getPublishedNotes(): Promise<NoteEntry[]> {
+  const notes = await getCollection('notes', ({ data }) => !data.draft);
+  return notes.sort((a, b) => b.data.date.localeCompare(a.data.date));
+}
+
+export async function getPublishedProjects(): Promise<ProjectEntry[]> {
+  const projects = await getCollection('projects', ({ data }) => !data.draft);
+  return projects.sort((a, b) => b.data.date.localeCompare(a.data.date));
 }
 
 function countPostsByCategory(posts: PostEntry[]): CategoryCount[] {
@@ -106,28 +118,38 @@ export function collectRecent(
 }
 
 export async function getSiteData() {
-  const [posts, illustrations] = await Promise.all([
+  const [posts, illustrations, notes, projects] = await Promise.all([
     getPublishedPosts(),
     getPublishedIllustrations(),
+    getPublishedNotes(),
+    getPublishedProjects(),
   ]);
 
   const tags = collectTags(posts, illustrations);
   const recent = collectRecent(posts, illustrations);
   const postCategories = countPostsByCategory(posts);
   const illustrationCategories = countIllustrationsByCategory(illustrations);
-  const dates = [...posts, ...illustrations].map((entry) => entry.data.date).sort();
+  const dates = [...posts, ...illustrations, ...notes, ...projects]
+    .map((entry) => entry.data.date)
+    .sort();
+  const featuredProjects = projects.filter((project) => project.data.featured);
 
   return {
     posts,
     illustrations,
+    notes,
+    projects,
     postCount: posts.length,
     illustrationCount: illustrations.length,
+    noteCount: notes.length,
+    projectCount: projects.length,
     categoryCount: POST_CATEGORIES.length + ILLUSTRATION_CATEGORIES.length,
     tagCount: tags.length,
     tags,
     recent,
     postCategories,
     illustrationCategories,
+    featuredProjects: featuredProjects.length > 0 ? featuredProjects : projects.slice(0, 2),
     latestDate: dates.at(-1) ?? '',
     earliestDate: dates[0] ?? '',
   };

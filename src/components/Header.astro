@@ -9,6 +9,9 @@ const navItems = [
   { label: '首页', href: withBase('/') },
   { label: '文章', href: withBase('/posts/') },
   { label: '插画', href: withBase('/illustrations/') },
+  { label: '说说', href: withBase('/notes/') },
+  { label: '项目', href: withBase('/projects/') },
+  { label: '照片墙', href: withBase('/gallery/') },
   { label: '归档', href: withBase('/archive/') },
   { label: '关于', href: withBase('/about/') },
 ];
@@ -35,7 +38,7 @@ function isActive(href: string): boolean {
       </span>
     </a>
 
-    <nav class="hidden items-center gap-1 md:flex" aria-label="主导航">
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="主导航">
       {
         navItems.map((item) => (
           <a
@@ -82,7 +85,7 @@ function isActive(href: string): boolean {
 
       <button
         type="button"
-        class="icon-button md:hidden"
+        class="icon-button lg:hidden"
         id="menu-toggle"
         aria-label="打开菜单"
         aria-expanded="false"
@@ -98,7 +101,7 @@ function isActive(href: string): boolean {
     </div>
   </div>
 
-  <div id="mobile-menu" class="hidden border-t border-white/50 bg-cream/95 px-4 pb-4 pt-2 backdrop-blur-xl dark:border-white/10 dark:bg-[#17110d]/95 md:hidden">
+  <div id="mobile-menu" class="hidden border-t border-white/50 bg-cream/95 px-4 pb-4 pt-2 backdrop-blur-xl dark:border-white/10 dark:bg-[#17110d]/95 lg:hidden">
     <nav class="mx-auto grid max-w-[88rem] gap-1" aria-label="移动端导航">
       {
         navItems.map((item) => (
@@ -189,6 +192,6 @@ function isActive(href: string): boolean {
   });
 
   window.addEventListener('resize', () => {
-    if (window.matchMedia('(min-width: 768px)').matches) setMenu(false);
+    if (window.matchMedia('(min-width: 1024px)').matches) setMenu(false);
   });
 </script>

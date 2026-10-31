@@ -1,6 +1,6 @@
 # 银曜的个人博客
 
-一个用来存档文章与插画的私人小站。Astro 静态生成，自带一个轻量的 `/editor/` 编辑页，GitHub Actions 自动部署与备份。
+一个用来存档文章、插画、说说和项目的私人小站。Astro 静态生成，自带一个轻量的 `/editor/` 编辑页，GitHub Actions 自动部署与备份。
 
 - 站点名：`银曜的个人博客`
 - 仓库名：`yulong-yinyao`
@@ -111,6 +111,7 @@ yulong-yinyao/
 │  ├─ uploads/
 │  │  ├─ posts/              # 文章封面与正文图
 │  │  ├─ illustrations/      # 插画图片
+│  │  ├─ projects/           # 项目封面
 │  │  └─ site/               # 站点头像
 │  ├─ robots.txt             # 全站禁止爬虫
 │  ├─ hero.svg               # 首页 Banner
@@ -121,15 +122,19 @@ yulong-yinyao/
 │  ├─ setup.mjs              # 首次配置
 │  └─ copy-cms.mjs           # 复制 CMS 静态文件
 ├─ src/
-│  ├─ components/            # Header/Hero/卡片/筛选/搜索/灯箱…
+│  ├─ components/            # Header/Hero/卡片/筛选/搜索/灯箱/日历/天气…
 │  ├─ content/
 │  │  ├─ posts/              # 文章 Markdown
-│  │  └─ illustrations/      # 插画 Markdown
+│  │  ├─ illustrations/      # 插画 Markdown
+│  │  ├─ notes/              # 说说 Markdown
+│  │  └─ projects/           # 项目 Markdown
 │  ├─ content.config.ts      # 内容模型与校验
-│  ├─ data/categories.ts     # 读取 config/categories.json
+│  ├─ data/
+│  │  ├─ categories.ts       # 读取 config/categories.json
+│  │  └─ friends.ts          # 友链静态数据
 │  ├─ layouts/BaseLayout.astro
 │  ├─ lib/content.ts         # 查询、统计、标签
-│  ├─ pages/                 # 首页/列表/详情/归档/关于/404/editor
+│  ├─ pages/                 # 首页/文章/插画/说说/项目/照片墙/友链/归档/关于/404/editor
 │  ├─ styles/global.css      # Tailwind 4 + 主题
 │  └─ consts.ts              # 路径、日期、摘要等工具
 ├─ .github/workflows/
@@ -183,6 +188,39 @@ draft: false
 ---
 ```
 
+### 说说 `src/content/notes/*.md`
+
+```yaml
+---
+title: 可选标题
+date: 2026-10-31
+tags:
+  - 日常
+draft: false
+---
+
+一两句话，或者一小段 Markdown。
+```
+
+### 项目 `src/content/projects/*.md`
+
+```yaml
+---
+title: 项目名
+date: 2026-10-31
+summary: 一句话说明这个项目。
+tags:
+  - Astro
+link: https://example.com        # 可选
+repo: https://github.com/...     # 可选
+cover: /uploads/projects/封面.webp # 可选
+featured: true                   # 首页精选
+draft: false
+---
+
+项目正文 Markdown。
+```
+
 ### 分类
 
 分类数据在 `config/categories.json`，初始为：
@@ -202,7 +240,7 @@ draft: false
 
 ### 图片路径规则
 
-- 文件放在 `public/uploads/posts/` 或 `public/uploads/illustrations/`。
+- 文件放在 `public/uploads/posts/`、`public/uploads/illustrations/` 或 `public/uploads/projects/`。
 - Markdown 正文里写 `/uploads/...`，构建时 `rehypeBaseUploads()` 会自动补上项目页的 `/yulong-yinyao/` 前缀。
 - 组件里的图片用 `withBase()` 补前缀。
 - 不要写死 `https://<用户名>.github.io/...`，换域名会全部失效。
@@ -213,8 +251,8 @@ draft: false
 
 1. 打开 `/editor/`。
 2. 粘贴 GitHub Fine-grained PAT（权限：Contents Read and write；Metadata Read）。
-3. 左侧选文章/插画，或点“+ 文章”“+ 插画”新建。
-4. 标题、日期、分类、标签直接在表单里填；正文用 Markdown；封面和插画图可以上传、从媒体库选、删除。
+3. 顶部选“文章 / 插画 / 说说 / 项目”，或点“+ 文章 / + 插画 / + 说说 / + 项目”新建。
+4. 标题、日期、分类（文章/插画）、标签直接在表单里填；正文用 Markdown；封面、插画多图和项目封面可以上传、从媒体库选、删除。
 5. 点“保存并发布”，页面会直接 commit 到 `main`，GitHub Actions 自动重新构建。
 6. 顶部“站点”里可以改左侧卡片的头像、简介，以及文章/插画分类；保存会同时提交 `config/site.json` 和 `config/categories.json`，只触发一次构建。
 
@@ -223,6 +261,12 @@ PAT 只存在当前浏览器 localStorage，不会提交到仓库。换浏览器
 编辑器不依赖 Sveltia：文章和图片都通过 GitHub Contents API 直接读写。`/admin/` 仍然保留，作为可选的 Sveltia 后台；日常使用 `/editor/` 即可。
 
 > 手机端上传调用系统文件选择器，可从相册选图或直接拍照；一次多选的支持取决于手机浏览器。PC 端可以一次批量选图，媒体库支持设为封面、加入插画、复制路径和删除。
+
+### 友链和“此刻”
+
+- 友链是静态数据，编辑 `src/data/friends.ts` 里的数组，下次构建生效；页面本身不会暴露后台。
+- 右栏“此刻”用 Open-Meteo 免费接口显示北京天气，不需要 key；`config/site.json` 的 `nowPlaying` 填了 `title` 才会显示音乐块，不填就只显示天气。
+- 天气请求失败时会显示“天气暂时没有回应”，不影响页面其余部分。
 
 ---
 
@@ -280,10 +324,11 @@ https://<用户名>.github.io/yulong-yinyao/
 
 ## 10. 当前状态
 
-- [x] Astro 构建通过，生成 11 个页面（含 `/editor/`）。
+- [x] Astro 构建通过，本地生成 18 个页面（含 `/editor/`）；线上按实际内容生成。
 - [x] Pagefind 中文索引生成，只索引已发布详情页。
 - [x] 三栏布局、深色模式、分类/标签筛选、归档、搜索弹层、插画灯箱。
-- [x] `/editor/` 轻量编辑器：文章/插画新建、编辑、删除，图片上传、媒体库、Markdown 预览。
+- [x] P1：说说、项目、照片墙、友链、日历侧栏、北京天气/此刻卡片。
+- [x] `/editor/` 轻量编辑器：文章/插画/说说/项目新建、编辑、删除，图片上传、媒体库、Markdown 预览。
 - [x] Sveltia CMS 配置保留为可选后台，PAT 登录说明。
 - [x] robots.txt + 全局 noindex。
 - [x] 自动部署 + 自动备份 workflow。

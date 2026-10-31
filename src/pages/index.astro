@@ -1,4 +1,5 @@
 ---
+import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
 import SearchBar from '../components/SearchBar.astro';
@@ -6,12 +7,25 @@ import ThreeColumnLayout from '../components/ThreeColumnLayout.astro';
 import CategoryNav from '../components/CategoryNav.astro';
 import PostCard from '../components/PostCard.astro';
 import IllustrationCard from '../components/IllustrationCard.astro';
+import NoteCard from '../components/NoteCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import { withBase } from '../consts';
 import { getSiteData } from '../lib/content';
 
 const data = await getSiteData();
 const latestPosts = data.posts.slice(0, 3);
 const latestIllustrations = data.illustrations.slice(0, 2);
+const latestNotes = await Promise.all(
+  data.notes.slice(0, 2).map(async (note) => ({
+    note,
+    Content: (await render(note)).Content,
+  })),
+);
+const featuredProjects = data.featuredProjects.slice(0, 2);
+const galleryImages = data.illustrations
+  .flatMap((illustration) => illustration.data.images)
+  .slice(0, 4)
+  .map((src) => withBase(src));
 
 const groups = [
   {
@@ -40,6 +54,8 @@ const groups = [
     illustrationCount={data.illustrationCount}
     categoryCount={data.categoryCount}
     tagCount={data.tagCount}
+    noteCount={data.noteCount}
+    projectCount={data.projectCount}
     recent={data.recent}
   >
     <CategoryNav groups={groups} />
@@ -106,6 +122,112 @@ const groups = [
           </div>
         )
       }
+    </section>
+
+    {
+      latestNotes.length > 0 && (
+        <section aria-labelledby="latest-notes">
+          <div class="mb-3 flex items-end justify-between gap-3 px-1">
+            <h2
+              id="latest-notes"
+              class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white"
+            >
+              最近记下
+            </h2>
+            <a href={withBase('/notes/')} class="chip-muted">
+              全部说说
+              <svg
+                viewBox="0 0 24 24"
+                class="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="grid gap-4">
+            {latestNotes.map(({ note, Content }) => (
+              <NoteCard note={note}>
+                <Content />
+              </NoteCard>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      featuredProjects.length > 0 && (
+        <section aria-labelledby="featured-projects">
+          <div class="mb-3 flex items-end justify-between gap-3 px-1">
+            <h2
+              id="featured-projects"
+              class="font-display text-2xl font-semibold tracking-tight text-ink dark:text-white"
+            >
+              在做的事
+            </h2>
+            <a href={withBase('/projects/')} class="chip-muted">
+              全部项目
+              <svg
+                viewBox="0 0 24 24"
+                class="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </a>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            {featuredProjects.map((project) => <ProjectCard project={project} />)}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="card overflow-hidden" aria-labelledby="gallery-entry">
+      <a href={withBase('/gallery/')} class="group grid gap-0 sm:grid-cols-[1fr_1.1fr]">
+        <div class="grid grid-cols-2 gap-1.5 bg-gradient-to-br from-rose-100 via-amber-50 to-violet-100 p-2 dark:from-rose-400/10 dark:via-amber-300/5 dark:to-violet-400/10">
+          {galleryImages.length > 0 ? (
+            galleryImages.map((src, index) => (
+              <img
+                src={src}
+                alt=""
+                class:list={[
+                  'h-24 w-full rounded-lg object-cover transition duration-500 group-hover:scale-[1.02] sm:h-28',
+                  index === 0 && 'col-span-2 h-32 sm:h-36',
+                ]}
+                loading="lazy"
+                decoding="async"
+              />
+            ))
+          ) : (
+            <div class="col-span-2 grid h-48 place-items-center font-display text-3xl text-rose-300/70 dark:text-rose-200/30">画</div>
+          )}
+        </div>
+        <div class="flex flex-col justify-center p-6">
+          <p class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-rose-400">Gallery</p>
+          <h2 id="gallery-entry" class="mt-1 font-display text-2xl font-semibold tracking-tight text-ink dark:text-white">
+            照片墙
+          </h2>
+          <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">
+            把插画铺成一面墙，点开可以放大看。
+          </p>
+          <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-rose-500 transition group-hover:gap-2.5 dark:text-rose-300">
+            去看看
+            <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M5 12h14m-5-5 5 5-5 5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </span>
+        </div>
+      </a>
     </section>
   </ThreeColumnLayout>
 </BaseLayout>

@@ -42,4 +42,29 @@ const illustrations = defineCollection({
   }),
 });
 
-export const collections = { posts, illustrations };
+const notes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/notes' }),
+  schema: z.object({
+    title: z.string().default(''),
+    date: dateValue,
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+const projects = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  schema: z.object({
+    title: z.string(),
+    date: dateValue,
+    summary: z.string().default(''),
+    tags: z.array(z.string()).default([]),
+    link: z.string().default(''),
+    repo: z.string().default(''),
+    cover: z.string().optional(),
+    featured: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { posts, illustrations, notes, projects };

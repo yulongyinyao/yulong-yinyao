@@ -1,0 +1,56 @@
+---
+import type { ProjectEntry } from '../lib/content';
+import { formatDate, projectHref, withBase } from '../consts';
+
+interface Props {
+  project: ProjectEntry;
+}
+
+const { project } = Astro.props;
+const href = projectHref(project.id);
+const cover = project.data.cover ? withBase(project.data.cover) : '';
+---
+
+<article class="group card overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_-30px_rgba(100,60,70,0.45)]">
+  <a href={href} class="block" aria-label={`查看项目：${project.data.title}`}>
+    <div class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-rose-100 via-amber-50 to-violet-100 dark:from-rose-400/15 dark:via-amber-300/10 dark:to-violet-400/10">
+      {cover ? (
+        <img
+          src={cover}
+          alt={project.data.title}
+          class="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div class="grid h-full place-items-center">
+          <span class="font-display text-4xl text-rose-300/80 dark:text-rose-200/40">项</span>
+        </div>
+      )}
+      {project.data.featured && (
+        <span class="absolute left-3 top-3 rounded-full border border-white/40 bg-white/80 px-2.5 py-1 text-[0.65rem] font-semibold text-rose-700 backdrop-blur dark:border-white/10 dark:bg-black/40 dark:text-rose-200">
+          精选
+        </span>
+      )}
+    </div>
+  </a>
+
+  <div class="p-5">
+    <p class="text-[0.65rem] tracking-wide text-slate-400 dark:text-slate-500">{formatDate(project.data.date)}</p>
+    <h2 class="mt-1 font-display text-xl font-semibold tracking-tight text-ink dark:text-white">
+      <a href={href} class="transition hover:text-rose-600 dark:hover:text-rose-300">{project.data.title}</a>
+    </h2>
+    {project.data.summary && (
+      <p class="mt-2 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{project.data.summary}</p>
+    )}
+    <div class="mt-4 flex flex-wrap items-center gap-1.5">
+      {project.data.tags.slice(0, 3).map((tag) => <span class="chip-muted">#{tag}</span>)}
+      <a href={href} class="ml-auto inline-flex items-center gap-1 text-[0.7rem] font-medium text-rose-500 transition hover:gap-1.5 hover:text-rose-600 dark:text-rose-300">
+        查看
+        <svg viewBox="0 0 24 24" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14m-5-5 5 5-5 5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</article>
