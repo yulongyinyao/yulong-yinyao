@@ -892,7 +892,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
     const cleaned = cleanGroups(groups);
     const nextProfile = {
       ...(profile || {}),
-      avatar: avatar.trim(),
+      avatar: avatar.trim() || '/avatar.svg',
       bio: $<HTMLTextAreaElement>('settings-bio').value.trim(),
     };
     const files = [
@@ -911,6 +911,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       $('settings-status').textContent = '正在提交…';
       const shas = await commitFiles(files, 'settings: update profile and categories');
       profile = nextProfile;
+      avatar = nextProfile.avatar;
       postCategories = cleaned.posts;
       illustrationCategories = cleaned.illustrations;
       profileSha = shas['config/site.json'] || profileSha;
