@@ -17,6 +17,7 @@ interface Props {
 const { post, compact = false } = Astro.props;
 const href = postHref(post.id);
 const cover = post.data.cover ? withBase(post.data.cover) : '';
+const hasCover = Boolean(cover);
 const summary = excerpt(post.body ?? '', compact ? 76 : 118);
 const minutes = readingTime(post.body ?? '');
 ---
@@ -24,14 +25,15 @@ const minutes = readingTime(post.body ?? '');
 <article
   class:list={[
     'group card flex flex-col overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-[0_30px_70px_-34px_rgba(92,55,27,0.5)]',
-    !compact && 'sm:grid sm:min-h-[14rem] sm:grid-cols-[minmax(0,1fr)_38%]',
+    !compact && hasCover && 'sm:grid sm:min-h-[14rem] sm:grid-cols-[minmax(0,1fr)_38%]',
   ]}
   data-filter-item
   data-category={post.data.category}
   data-tags={JSON.stringify(post.data.tags)}
 >
-  <div class:list={['order-2 flex min-w-0 flex-col p-5 sm:p-6', compact && 'p-5']}>
+  <div class:list={['flex min-w-0 flex-col p-5 sm:p-6', hasCover ? 'order-2' : 'order-1']}>
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.66rem] tracking-wide text-slate-400 dark:text-slate-500">
+      {!hasCover && <span class="font-medium text-rose-500 dark:text-rose-300">{categoryLabel('post', post.data.category)}</span>}
       <time datetime={post.data.date}>{formatDate(post.data.date)}</time>
       <span class="h-0.5 w-0.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
       <span>{minutes} 分钟阅读</span>
@@ -70,19 +72,19 @@ const minutes = readingTime(post.body ?? '');
     </div>
   </div>
 
-  <a
-    href={href}
-    class:list={['order-1 block overflow-hidden sm:order-2', !compact && 'sm:h-full']}
-    aria-label={`阅读：${post.data.title}`}
-  >
-    <div
-      class:list={[
-        'relative overflow-hidden bg-gradient-to-br from-rose-100 via-violet-100 to-slate-100 dark:from-rose-400/15 dark:via-violet-400/10 dark:to-white/5',
-        compact ? 'aspect-[16/9]' : 'aspect-[16/10] sm:h-full sm:min-h-[14rem] sm:aspect-auto',
-      ]}
-    >
-      {
-        cover ? (
+  {
+    hasCover && (
+      <a
+        href={href}
+        class:list={['order-1 block overflow-hidden sm:order-2', !compact && 'sm:h-full']}
+        aria-label={`阅读：${post.data.title}`}
+      >
+        <div
+          class:list={[
+            'relative overflow-hidden bg-gradient-to-br from-rose-100 via-violet-100 to-slate-100 dark:from-rose-400/15 dark:via-violet-400/10 dark:to-white/5',
+            compact ? 'aspect-[16/9]' : 'aspect-[16/10] sm:h-full sm:min-h-[14rem] sm:aspect-auto',
+          ]}
+        >
           <img
             src={cover}
             alt=""
@@ -90,16 +92,12 @@ const minutes = readingTime(post.body ?? '');
             loading="lazy"
             decoding="async"
           />
-        ) : (
-          <div class="grid h-full min-h-[13rem] place-items-center">
-            <span class="font-display text-4xl text-rose-300/70 dark:text-rose-200/30">银</span>
-          </div>
-        )
-      }
-      <div class="absolute inset-0 bg-gradient-to-t from-[#2a1f32]/24 via-transparent to-transparent"></div>
-      <span class="absolute left-3 top-3 rounded-full border border-white/50 bg-white/85 px-2.5 py-1 text-[0.65rem] font-semibold text-rose-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-black/45 dark:text-rose-200">
-        {categoryLabel('post', post.data.category)}
-      </span>
-    </div>
-  </a>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#2a1f32]/24 via-transparent to-transparent"></div>
+          <span class="absolute left-3 top-3 rounded-full border border-white/50 bg-white/85 px-2.5 py-1 text-[0.65rem] font-semibold text-rose-700 shadow-sm backdrop-blur dark:border-white/10 dark:bg-black/45 dark:text-rose-200">
+            {categoryLabel('post', post.data.category)}
+          </span>
+        </div>
+      </a>
+    )
+  }
 </article>
