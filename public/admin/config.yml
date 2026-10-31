@@ -24,7 +24,13 @@ backend:
 # 项目页地址；绑定自定义域名后由 setup 改成域名根。
 site_url: https://yulongyinyao.github.io/yulong-yinyao/
 display_url: https://yulongyinyao.github.io/yulong-yinyao/
-logo_url: https://yulongyinyao.github.io/yulong-yinyao/avatar.svg
+logo:
+  src: https://yulongyinyao.github.io/yulong-yinyao/avatar.svg
+  show_in_header: true
+
+# 全局媒体库；Sveltia 要求必须存在
+media_folder: /public/uploads
+public_folder: /yulong-yinyao/uploads
 
 # 让编辑器里的中文界面尽量友好；不支持时会被忽略。
 locale: zh_Hans
@@ -49,7 +55,7 @@ collections:
     preview_path: "posts/{{slug}}/"
     sortable_fields: [date, title]
     summary: "{{title}} · {{date}}"
-    media_folder: public/uploads/posts
+       media_folder: /public/uploads/posts
     public_folder: /yulong-yinyao/uploads/posts
     fields:
       - name: title
@@ -113,7 +119,7 @@ collections:
     preview_path: "illustrations/{{slug}}/"
     sortable_fields: [date, title]
     summary: "{{title}} · {{date}}"
-    media_folder: public/uploads/illustrations
+     media_folder: /public/uploads/illustrations
     public_folder: /yulong-yinyao/uploads/illustrations
     fields:
       - name: title
@@ -164,3 +170,4 @@ collections:
         widget: boolean
         default: false
         hint: 草稿不会出现在插画列表、首页、归档和搜索结果里。
+fix: define CMS media folders
