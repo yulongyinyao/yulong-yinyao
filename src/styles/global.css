@@ -3,13 +3,32 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@font-face {
+  font-family: "AaGuDian";
+  src: url("../assets/fonts/AaGuDianKeBenSongYouMoBan.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ShanHaiJi";
+  src: url("../assets/fonts/ShanHaiJiGuSongKe-JianFan.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @theme {
   --font-sans:
-    "Inter", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    system-ui, sans-serif;
+    "AaGuDian", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", ui-serif, Georgia, serif;
   --font-display:
-    "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", ui-serif,
-    Georgia, serif;
+    "AaGuDian", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", ui-serif, Georgia, serif;
+  --font-body:
+    "ShanHaiJi", "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong",
+    "SimSun", ui-serif, Georgia, serif;
 
   /* Plum, mauve, lilac and warm cream. The rose/violet tokens are remapped so
      existing components pick up the new skin without a class-by-class rewrite. */
@@ -272,6 +291,7 @@ html.dark body::before {
     @apply prose-blockquote:border-l-rose-300 prose-blockquote:bg-rose-50/50 prose-blockquote:py-1 prose-blockquote:not-italic;
     @apply prose-img:rounded-2xl prose-img:shadow-lg prose-hr:border-slate-200;
     @apply dark:prose-invert dark:prose-a:text-rose-300 dark:prose-blockquote:border-l-rose-400/40 dark:prose-blockquote:bg-white/5 dark:prose-hr:border-white/10;
+    font-family: var(--font-body);
   }
 
   /* Keep the line breaks and indentation the author typed in Markdown. */
