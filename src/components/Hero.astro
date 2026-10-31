@@ -12,11 +12,11 @@ const { title = site.name } = Astro.props;
   <img
     src={withBase(site.heroImage)}
     alt=""
-    class="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+    class="absolute inset-0 -z-20 h-full w-full object-cover object-[center_32%]"
     fetchpriority="high"
     decoding="async"
   />
-  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#1b1730]/55 via-[#2a2140]/45 to-cream/95 dark:to-[#0f0d18]"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-b from-[#1b1730]/60 via-[#2a2140]/50 to-cream/95 dark:to-[#0f0d18]"></div>
   <div class="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-cream to-transparent dark:from-[#0f0d18]"></div>
 
   <div class="mx-auto flex min-h-[22rem] max-w-[88rem] flex-col items-center justify-center px-4 py-16 text-center sm:min-h-[26rem] sm:px-6 lg:min-h-[28rem] lg:px-8">
