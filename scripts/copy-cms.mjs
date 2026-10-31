@@ -25,6 +25,10 @@ export function copyCms() {
 
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.copyFileSync(source, target);
+
+  const sourceChunks = path.join(path.dirname(source), 'chunks');
+  const targetChunks = path.join(path.dirname(target), 'chunks');
+  fs.cpSync(sourceChunks, targetChunks, { recursive: true, force: true });
   const size = (fs.statSync(target).size / 1024).toFixed(0);
   console.log(`已复制 Sveltia CMS → public/admin/sveltia-cms.js (${size} KB)`);
   return true;
