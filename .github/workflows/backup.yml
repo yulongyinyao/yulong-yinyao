@@ -45,7 +45,8 @@ jobs:
 
           git checkout --orphan backup
           git rm -rf . --quiet || true
-          git add .backup/latest.zip .backup/latest.bundle
+          # .backup/ 在 .gitignore 里，必须强制加入，否则 commit 会是空的。
+          git add --force .backup/latest.zip .backup/latest.bundle
           git commit -m "backup: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push --force origin HEAD:backup
 
