@@ -373,8 +373,11 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
       if (!blob || blob.size >= file.size) return file;
 
       const stem = file.name.replace(/\.[^.]+$/, '') || 'image';
-      return new File([blob], `${stem}.webp`, {
-        type: 'image/webp',
+      // 某些 Safari 版本不支持 WebP 编码，会回退成 PNG；扩展名必须跟真实类型一致。
+      const extension =
+        blob.type === 'image/webp' ? 'webp' : blob.type === 'image/jpeg' ? 'jpg' : 'png';
+      return new File([blob], `${stem}.${extension}`, {
+        type: blob.type || 'image/png',
         lastModified: Date.now(),
       });
     } catch {
