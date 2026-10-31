@@ -2,8 +2,8 @@
 # ---------------------------------------------------------------------------
 # 这个文件由 scripts/setup.mjs 维护：
 #   - backend.repo 会写成 "<你的GitHub用户名>/yulong-yinyao"
-#   - site_url / display_url / logo_url 会按 GitHub Pages 地址生成
-#   - 两个 collection 的 public_folder 会带上项目页的 base 路径
+#   - site_url / display_url / logo.src 会按 GitHub Pages 地址生成
+#   - 全局和两个 collection 的 media_folder / public_folder 会带上正确路径
 #
 # 如果你改了仓库名或绑定了自定义域名，重新运行：
 #   pnpm setup
@@ -28,7 +28,7 @@ logo:
   src: https://yulongyinyao.github.io/yulong-yinyao/avatar.svg
   show_in_header: true
 
-# 全局媒体库；Sveltia 要求必须存在
+# 全局媒体库（Sveltia 要求必须存在；两个 collection 会覆盖成各自子目录）
 media_folder: /public/uploads
 public_folder: /yulong-yinyao/uploads
 
@@ -55,7 +55,7 @@ collections:
     preview_path: "posts/{{slug}}/"
     sortable_fields: [date, title]
     summary: "{{title}} · {{date}}"
-       media_folder: /public/uploads/posts
+    media_folder: /public/uploads/posts
     public_folder: /yulong-yinyao/uploads/posts
     fields:
       - name: title
@@ -119,7 +119,7 @@ collections:
     preview_path: "illustrations/{{slug}}/"
     sortable_fields: [date, title]
     summary: "{{title}} · {{date}}"
-     media_folder: /public/uploads/illustrations
+    media_folder: /public/uploads/illustrations
     public_folder: /yulong-yinyao/uploads/illustrations
     fields:
       - name: title
@@ -170,4 +170,3 @@ collections:
         widget: boolean
         default: false
         hint: 草稿不会出现在插画列表、首页、归档和搜索结果里。
-fix: define CMS media folders

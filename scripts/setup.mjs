@@ -103,6 +103,7 @@ domain = normalizeDomain(domain);
 
 const base = domain ? '' : `/${repo}`;
 const siteUrl = domain ? `https://${domain}/` : `https://${username}.github.io/${repo}/`;
+const publicUploads = `${base}/uploads`;
 const publicPosts = `${base}/uploads/posts`;
 const publicIllustrations = `${base}/uploads/illustrations`;
 
@@ -119,10 +120,18 @@ cms = cms
   .replace(/^  repo:.*$/m, `  repo: ${username}/${repo}`)
   .replace(/^site_url:.*$/m, `site_url: ${siteUrl}`)
   .replace(/^display_url:.*$/m, `display_url: ${siteUrl}`)
-  .replace(/^logo_url:.*$/m, `logo_url: ${siteUrl}avatar.svg`)
-  .replace(/^(\s*)public_folder:.*uploads\/posts.*$/gm, `$1public_folder: ${publicPosts}`)
+  .replace(/^logo_url:.*\n?/m, '')
+  .replace(/^(\s*src:\s*).*avatar\.svg.*$/m, `$1${siteUrl}avatar.svg`)
+  .replace(/^media_folder:.*$/m, `media_folder: /public/uploads`)
+  .replace(/^public_folder:.*$/m, `public_folder: ${publicUploads}`)
+  .replace(/^(\s+)media_folder:.*uploads\/posts.*$/gm, `$1media_folder: /public/uploads/posts`)
+  .replace(/^(\s+)public_folder:.*uploads\/posts.*$/gm, `$1public_folder: ${publicPosts}`)
   .replace(
-    /^(\s*)public_folder:.*uploads\/illustrations.*$/gm,
+    /^(\s+)media_folder:.*uploads\/illustrations.*$/gm,
+    `$1media_folder: /public/uploads/illustrations`,
+  )
+  .replace(
+    /^(\s+)public_folder:.*uploads\/illustrations.*$/gm,
     `$1public_folder: ${publicIllustrations}`,
   );
 fs.writeFileSync(cmsPath, cms, 'utf8');

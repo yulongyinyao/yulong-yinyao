@@ -307,6 +307,22 @@ backend:
 - 本地先执行 `pnpm cms:copy`。
 - 部署后确认 Actions 构建成功，`dist/admin/index.html` 在产物里。
 
+### 后台提示“未定义媒体文件夹” / `Errors found in configuration`
+
+Sveltia CMS 要求 `config.yml` **顶层**必须有 `media_folder`，即使每个 collection 已经单独配置了媒体目录。正确结构：
+
+```yaml
+media_folder: /public/uploads
+public_folder: /yulong-yinyao/uploads
+
+collections:
+  - name: posts
+    media_folder: /public/uploads/posts
+    public_folder: /yulong-yinyao/uploads/posts
+```
+
+注意 collection 级别的 `media_folder` 要以 `/` 开头，表示从仓库根目录开始；写成 `public/uploads/posts` 会被当成相对于 `src/content/posts` 的路径。
+
 ### 后台提示仓库找不到 / 401
 
 - `public/admin/config.yml` 里的 `repo` 必须是 `用户名/仓库名`，不是仓库 URL。
