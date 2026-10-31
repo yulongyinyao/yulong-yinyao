@@ -32,9 +32,6 @@ logo:
 media_folder: /public/uploads
 public_folder: /yulong-yinyao/uploads
 
-# 让编辑器里的中文界面尽量友好；不支持时会被忽略。
-locale: zh_Hans
-
 # 文件名只用 ASCII，避免中文 URL 在不同浏览器/终端里出现转义差异。
 slug:
   encoding: ascii
