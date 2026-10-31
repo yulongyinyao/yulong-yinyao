@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="银曜的个人博客">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#f7a8c4"/>
-      <stop offset="0.55" stop-color="#b99cf2"/>
-      <stop offset="1" stop-color="#8cc8ef"/>
+      <stop offset="0" stop-color="#ecd9ed"/>
+      <stop offset="0.55" stop-color="#ad86ae"/>
+      <stop offset="1" stop-color="#746097"/>
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="16" fill="url(#g)"/>
-  <path d="M20 44c9-4 13-12 14-24 1 12 5 20 14 24-9 4-13 10-14 18-1-8-5-14-14-18Z" fill="#fff" opacity="0.92"/>
-  <circle cx="46" cy="17" r="3" fill="#fff" opacity="0.8"/>
-  <circle cx="18" cy="20" r="1.8" fill="#fff" opacity="0.7"/>
+  <path d="M20 44c9-4 13-12 14-24 1 12 5 20 14 24-9 4-13 10-14 18-1-8-5-14-14-18Z" fill="#3b2f43" opacity="0.92"/>
+  <circle cx="46" cy="17" r="3" fill="#ecd9ed" opacity="0.9"/>
+  <circle cx="18" cy="20" r="1.8" fill="#ecd9ed" opacity="0.8"/>
 </svg>

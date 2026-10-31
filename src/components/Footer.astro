@@ -8,9 +8,8 @@ const configured = isConfigured();
 <footer class="mt-16 border-t border-slate-200/60 bg-white/30 backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.02]">
   <div class="mx-auto max-w-[88rem] px-4 py-10 sm:px-6 lg:px-8">
     <div class="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-      <a href={withBase('/')} class="flex items-center gap-2.5">
-        <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-rose-300 to-violet-400 text-xs font-bold text-white">银</span>
-        <span class="font-display text-lg font-semibold text-ink dark:text-white">{site.displayName}</span>
+      <a href={withBase('/')} class="flex items-center">
+        <span class="font-display text-xl font-semibold text-ink dark:text-white">{site.displayName}</span>
       </a>
 
       <div class="grid grid-cols-2 gap-8 text-xs sm:grid-cols-3">

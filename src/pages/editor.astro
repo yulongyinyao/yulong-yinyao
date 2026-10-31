@@ -762,7 +762,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
         const active = current?.path === item.path;
         const title = esc(item.data.title || (item.type === 'notes' ? '无题' : '未命名'));
         const date = esc(dateString(item.data.date));
-        const draft = item.data.draft ? '<span class="text-amber-500">草稿</span>' : '';
+        const draft = item.data.draft ? '<span class="text-rose-500">草稿</span>' : '';
         return `<button type="button" data-path="${esc(item.path)}" data-type="${item.type}" class="w-full rounded-xl border px-3 py-3 text-left transition ${
           active
             ? 'border-rose-200 bg-rose-50/80 dark:border-rose-300/30 dark:bg-rose-400/10'
@@ -792,7 +792,7 @@ const tokenUrl = 'https://github.com/settings/personal-access-tokens/new';
             <p class="truncate font-mono text-[0.65rem] text-slate-400" title="${esc(name)}">${esc(name)}</p>
             <div class="flex flex-wrap gap-1">
               <button type="button" data-media-action="cover" data-path="${esc(file.path)}" class="rounded-full bg-rose-50 px-2 py-1 text-[0.65rem] text-rose-600 hover:bg-rose-100 dark:bg-rose-400/10 dark:text-rose-200">封面</button>
-              <button type="button" data-media-action="avatar" data-path="${esc(file.path)}" class="rounded-full bg-amber-50 px-2 py-1 text-[0.65rem] text-amber-600 hover:bg-amber-100 dark:bg-amber-400/10 dark:text-amber-200">头像</button>
+              <button type="button" data-media-action="avatar" data-path="${esc(file.path)}" class="rounded-full bg-violet-50 px-2 py-1 text-[0.65rem] text-violet-600 hover:bg-violet-100 dark:bg-violet-400/10 dark:text-violet-200">头像</button>
               <button type="button" data-media-action="insert" data-path="${esc(file.path)}" class="rounded-full bg-violet-50 px-2 py-1 text-[0.65rem] text-violet-600 hover:bg-violet-100 dark:bg-violet-400/10 dark:text-violet-200">插画</button>
               <button type="button" data-media-action="copy" data-path="${esc(file.path)}" class="rounded-full bg-slate-100 px-2 py-1 text-[0.65rem] text-slate-500 hover:bg-slate-200 dark:bg-white/10 dark:text-slate-300">路径</button>
               <button type="button" data-media-action="delete" data-path="${esc(file.path)}" class="rounded-full bg-red-50 px-2 py-1 text-[0.65rem] text-red-500 hover:bg-red-100 dark:bg-red-400/10 dark:text-red-300">删除</button>

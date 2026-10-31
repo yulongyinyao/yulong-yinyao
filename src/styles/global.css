@@ -11,61 +11,61 @@
     "Noto Serif SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun", ui-serif,
     Georgia, serif;
 
-  /* Warm paper palette. The rose/violet tokens are remapped to copper and gold so
+  /* Plum, mauve, lilac and warm cream. The rose/violet tokens are remapped so
      existing components pick up the new skin without a class-by-class rewrite. */
-  --color-white: #fffaf4;
-  --color-cream: #f7efe7;
-  --color-ink: #3b2f2a;
-  --color-sakura: #b86f2b;
-  --color-lavender: #a87743;
+  --color-white: #fbf7f6;
+  --color-cream: #ede0d0;
+  --color-ink: #3b2f43;
+  --color-sakura: #746097;
+  --color-lavender: #ad86ae;
 
-  --color-slate-50: #faf6f0;
-  --color-slate-100: #f2e9dd;
-  --color-slate-200: #e5d6c3;
-  --color-slate-300: #d2bca3;
-  --color-slate-400: #ae937b;
-  --color-slate-500: #8c715b;
-  --color-slate-600: #705744;
-  --color-slate-700: #584336;
-  --color-slate-800: #44342b;
-  --color-slate-900: #332821;
-  --color-slate-950: #1d1510;
+  --color-slate-50: #faf6f7;
+  --color-slate-100: #f4ecef;
+  --color-slate-200: #e8dce2;
+  --color-slate-300: #d6c2cf;
+  --color-slate-400: #b79eb3;
+  --color-slate-500: #977e99;
+  --color-slate-600: #7d6683;
+  --color-slate-700: #65506d;
+  --color-slate-800: #514059;
+  --color-slate-900: #3f3148;
+  --color-slate-950: #241c2e;
 
-  --color-rose-50: #fbf1e6;
-  --color-rose-100: #f6e2cc;
-  --color-rose-200: #ecc7a5;
-  --color-rose-300: #dfa679;
-  --color-rose-400: #cd8352;
-  --color-rose-500: #b86f2b;
-  --color-rose-600: #9a5a22;
-  --color-rose-700: #7d481f;
-  --color-rose-800: #653a1e;
-  --color-rose-900: #53301d;
-  --color-rose-950: #2e190c;
+  --color-rose-50: #f8f0f8;
+  --color-rose-100: #f1e2f2;
+  --color-rose-200: #e6cfe7;
+  --color-rose-300: #d5b4d6;
+  --color-rose-400: #c39cc4;
+  --color-rose-500: #ad86ae;
+  --color-rose-600: #967096;
+  --color-rose-700: #7c5a7d;
+  --color-rose-800: #654866;
+  --color-rose-900: #513a53;
+  --color-rose-950: #2d2030;
 
-  --color-violet-50: #faf4e9;
-  --color-violet-100: #f3e5d1;
-  --color-violet-200: #e6ccaa;
-  --color-violet-300: #d4ae7f;
-  --color-violet-400: #bf9059;
-  --color-violet-500: #a87743;
-  --color-violet-600: #8c5f35;
-  --color-violet-700: #714b2b;
-  --color-violet-800: #5c3d24;
-  --color-violet-900: #4a321e;
-  --color-violet-950: #291b10;
+  --color-violet-50: #f4f1f8;
+  --color-violet-100: #e9e2f1;
+  --color-violet-200: #d4c7e4;
+  --color-violet-300: #baa7d2;
+  --color-violet-400: #9b83bd;
+  --color-violet-500: #746097;
+  --color-violet-600: #624f82;
+  --color-violet-700: #51406d;
+  --color-violet-800: #423458;
+  --color-violet-900: #352a47;
+  --color-violet-950: #1e172b;
 }
 
 :root {
   color-scheme: light;
-  --page-bg: #f7efe7;
-  --page-fg: #3b2f2a;
+  --page-bg: #ede0d0;
+  --page-fg: #3b2f43;
 }
 
 html.dark {
   color-scheme: dark;
-  --page-bg: #17110d;
-  --page-fg: #f1e5d7;
+  --page-bg: #1e1728;
+  --page-fg: #f2e7ee;
 }
 
 html {
@@ -83,11 +83,11 @@ body {
 }
 
 ::selection {
-  background: #e4b77f;
-  color: #3b2f2a;
+  background: #ecd9ed;
+  color: #3b2f43;
 }
 
-/* Subtle paper grain and a warm wash, no external assets. */
+/* Subtle paper grain and a cool lilac wash, no external assets. */
 body::before {
   content: "";
   position: fixed;
@@ -96,8 +96,8 @@ body::before {
   pointer-events: none;
   opacity: 0.42;
   background-image:
-    radial-gradient(rgba(122, 79, 39, 0.13) 0.6px, transparent 0.6px),
-    linear-gradient(180deg, rgba(255, 250, 244, 0.28), transparent 42%);
+    radial-gradient(rgba(116, 96, 151, 0.13) 0.6px, transparent 0.6px),
+    linear-gradient(180deg, rgba(236, 217, 237, 0.26), transparent 42%);
   background-size:
     16px 16px,
     100% 100%;
@@ -107,26 +107,26 @@ body::before {
 html.dark body::before {
   opacity: 0.2;
   background-image:
-    radial-gradient(rgba(232, 198, 154, 0.14) 0.6px, transparent 0.6px),
-    linear-gradient(180deg, rgba(255, 240, 220, 0.04), transparent 45%);
+    radial-gradient(rgba(236, 217, 237, 0.12) 0.6px, transparent 0.6px),
+    linear-gradient(180deg, rgba(236, 217, 237, 0.04), transparent 45%);
 }
 
 #search-results mark {
   border-radius: 0.2rem;
-  background: rgba(214, 138, 58, 0.24);
+  background: rgba(173, 134, 174, 0.28);
   color: inherit;
   padding: 0 0.08em;
 }
 
 .dark #search-results mark {
-  background: rgba(240, 184, 112, 0.22);
-  color: #ffe2b8;
+  background: rgba(236, 217, 237, 0.24);
+  color: #f3e6f2;
 }
 
 /* Fixed transparent header over the home hero; solid paper once scrolled. */
 .site-header {
-  background-color: rgba(247, 239, 231, 0.84);
-  border-color: rgba(255, 250, 244, 0.65);
+  background-color: rgba(237, 224, 208, 0.84);
+  border-color: rgba(236, 217, 237, 0.65);
   transition:
     background-color 250ms ease,
     border-color 250ms ease,
@@ -140,23 +140,23 @@ html.dark body::before {
   background-color: transparent;
   background-image: linear-gradient(
     to bottom,
-    rgba(35, 22, 15, 0.52),
-    rgba(35, 22, 15, 0.18) 55%,
+    rgba(42, 31, 50, 0.56),
+    rgba(42, 31, 50, 0.2) 55%,
     transparent
   );
   border-color: transparent;
 }
 
 .site-header[data-transparent='true'].is-scrolled {
-  background-color: rgba(247, 239, 231, 0.92);
+  background-color: rgba(237, 224, 208, 0.94);
   background-image: none;
-  border-color: rgba(255, 250, 244, 0.65);
-  box-shadow: 0 14px 40px -30px rgba(70, 44, 26, 0.45);
+  border-color: rgba(236, 217, 237, 0.65);
+  box-shadow: 0 14px 40px -30px rgba(59, 47, 67, 0.42);
 }
 
 .dark .site-header {
-  background-color: rgba(23, 17, 13, 0.86);
-  border-color: rgba(255, 250, 244, 0.1);
+  background-color: rgba(30, 23, 40, 0.88);
+  border-color: rgba(236, 217, 237, 0.1);
 }
 
 .dark .site-header[data-transparent='true'] {
@@ -165,37 +165,37 @@ html.dark body::before {
 }
 
 .dark .site-header[data-transparent='true'].is-scrolled {
-  background-color: rgba(23, 17, 13, 0.92);
-  border-color: rgba(255, 250, 244, 0.1);
+  background-color: rgba(30, 23, 40, 0.94);
+  border-color: rgba(236, 217, 237, 0.1);
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .site-title,
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link,
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link-active {
-  color: #fffaf4;
+  color: #fbf7f6;
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link:hover,
 .site-header[data-transparent='true']:not(.is-scrolled) .nav-link-active {
-  background-color: rgba(255, 250, 244, 0.14);
+  background-color: rgba(236, 217, 237, 0.16);
   box-shadow: none;
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .icon-button {
-  border-color: rgba(255, 250, 244, 0.28);
-  background-color: rgba(255, 250, 244, 0.12);
-  color: #fffaf4;
+  border-color: rgba(236, 217, 237, 0.28);
+  background-color: rgba(236, 217, 237, 0.12);
+  color: #fbf7f6;
   box-shadow: none;
 }
 
 .site-header[data-transparent='true']:not(.is-scrolled) .icon-button:hover {
-  background-color: rgba(255, 250, 244, 0.22);
+  background-color: rgba(236, 217, 237, 0.22);
   color: #fff;
 }
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-white/70 bg-white/70 shadow-[0_18px_50px_-28px_rgba(94,62,38,0.32)] backdrop-blur-xl;
+    @apply rounded-2xl border border-white/70 bg-white/70 shadow-[0_18px_50px_-28px_rgba(59,47,67,0.3)] backdrop-blur-xl;
     @apply dark:border-white/10 dark:bg-white/[0.055] dark:shadow-[0_18px_60px_-30px_rgba(0,0,0,0.85)];
   }
 
